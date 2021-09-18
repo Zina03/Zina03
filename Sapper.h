@@ -1,5 +1,4 @@
 // Sapper.h
-
 #pragma once
 
 #include <Windows.h>
@@ -10,13 +9,18 @@
 void EpilepsyTime(int language);
 
 template<typename T>
-auto Create_array(T** arr, size_t lenght);
+auto Create_array(size_t size, T** arr);
 
-void Create_GameField(char** GameField, bool** HiddenField, size_t size);
+template<typename T>
+auto Delete_array(size_t size, T** arr);
 
-void SetMina(int mina, char** GameField, bool** HiddenField, size_t size);
+void Create_GameField(size_t size, char** GameField, bool** HiddenField);
 
-void Show_GameField(char** GameField, size_t size);
+void SetMina(int mina, size_t size, char** GameField, bool** HiddenField);
+
+void Show_GameField(size_t size, bool** GameField);
+
+void Delete_Game(size_t size, char** GameField, bool** HiddenField);
 
 
 // Sapper.cpp
@@ -25,14 +29,13 @@ void Show_GameField(char** GameField, size_t size);
 
 void EpilepsyTime(int language) // Веселая загрузка игры 
 {
-	
-	if (language) 
-	{ 
+	if (language)
+	{
 		std::cout << std::setw(86) << std::setfill(' ') << ' ' << "Loading.";
 	}
-	else 
+	else
 	{
-		std::cout << std::setw(84) << std::setfill(' ') << ' ' << "Загрузка.";	 
+		std::cout << std::setw(84) << std::setfill(' ') << ' ' << "Загрузка.";
 	}
 	Sleep(500);
 
@@ -69,18 +72,29 @@ void EpilepsyTime(int language) // Веселая загрузка игры
 }
 
 template<typename T>
-auto Create_array(T** arr, size_t lenght)
+auto Create_array(size_t size, T** arr)
 {
-	for (size_t i = 0; i < lenght; i++)
+	for (size_t i = 0; i < size; i++)
 	{
-		arr[i] = new T[lenght];
+		arr[i] = new T[size];
 	}
 }
 
-void Create_GameField(char** GameField, bool** HiddenField, size_t size) // Создание Игрового поля. Заполнения определенными символами
+template<typename T>
+auto Delete_array(size_t size, T** arr)
 {
-	Create_array(GameField, size);
-	Create_array(HiddenField, size);
+	for (size_t i = 0; i < size; i++)
+	{
+		delete[] arr[i];
+	}
+
+	delete[] arr;
+}
+
+void Create_GameField(size_t size, char** GameField, bool** HiddenField) // Создание Игрового поля. Заполнения определенными символами
+{
+	Create_array(size, GameField);
+	Create_array(size, HiddenField);
 
 	char symbol = '*';
 
@@ -89,17 +103,17 @@ void Create_GameField(char** GameField, bool** HiddenField, size_t size) // Со
 		for (int j = 0; j < size; j++)
 		{
 			GameField[i][j] = symbol;
-			HiddenField[i][j] = false;
+			HiddenField[i][j] = 0;
 		}
 	}
 }
 
-void SetMina(int mina, char** GameField, bool** HiddenField, size_t size) // Раставление мин в рандомном порядке
+void SetMina(int mina, size_t size, char** GameField, bool** HiddenField) // Раставление мин в рандомном порядке
 {
 	for (int i = 0; i < mina; i++)
 	{
-		int x = rand() % size; // random numbers from diaposon 0 - size
-		int y = rand() % size; // random numbers from diaposon 0 - size
+		int x = rand() % size; // random numbers from diaposon 0 <-> size
+		int y = rand() % size; // random numbers from diaposon 0 <-> size
 		if (!HiddenField[x][y])
 		{
 			HiddenField[x][y] = 1;
@@ -107,23 +121,22 @@ void SetMina(int mina, char** GameField, bool** HiddenField, size_t size) // Р�
 	}
 }
 
-void Show_GameField(char** GameField, size_t size) // Выводим на экран Игровое поле
+void Show_GameField(size_t size, bool** Field) // Выводим на экран Игровое поле
 {
-	int horizontal_coordinates = 0;
 	char vertical_coordinates = 65;
 
 	std::cout << std::setw(212) << std::setfill('_') << " \n" << std::endl;
 
 	std::cout << std::setw(70) << std::setfill(' ') << ' ';
-	for (int i = 0; i < size; i++)
+	for (int i = 0; i < size;)
 	{
 		if (i > 8)
 		{
-			std::cout << horizontal_coordinates++ << "  ";
+			std::cout << i++ << "  ";
 		}
 		else
 		{
-			std::cout << horizontal_coordinates++ << "   ";
+			std::cout << i++ << "   ";
 		}
 	}
 
@@ -131,13 +144,19 @@ void Show_GameField(char** GameField, size_t size) // Выводим на экр
 
 	for (int i = 0; i < size; i++)
 	{
-		std::cout << std::setw(65) << std::setfill(' ') << ' ' << vertical_coordinates++ << " |  ";
+		std::cout << std::setw(65) << std::setfill(' ') << ' ' << (char)(vertical_coordinates + i) << " |  ";
 		for (int j = 0; j < size; j++)
 		{
-			std::cout << GameField[i][j] << "   ";
+			std::cout << Field[i][j] << "   ";
 		}
 		std::cout << '\n';
 	}
 	std::cout << std::setw(212) << std::setfill('_') << " \n" << std::endl;
 
+}
+
+void Delete_Game(size_t size, char** GameField, bool** HiddenField)
+{
+	Delete_array(size, GameField);
+	Delete_array(size, HiddenField);
 }
