@@ -22,8 +22,11 @@ enum SelectSize
 int main()
 {
 	setlocale(0, "");
-
+	bool new_game = true;
+	do
+	{
 	int language;
+
 	std::cout << std::setw(212) << std::setfill('_') << " \n" << std::endl;
 	std::cout << std::setw(100) << std::setfill(' ') << " Select Language:" << std::endl;
 	std::cout << std::setw(212) << std::setfill('_') << " \n" << std::endl;
@@ -42,7 +45,6 @@ int main()
 		language = 0;
 	}
 
-	
 	switch (language)
 	{
 	case Russian:
@@ -67,6 +69,7 @@ int main()
 		std::cout << std::setw(212) << std::setfill('_') << " \n" << std::endl;
 		break;
 	}
+
 	case English:
 	{
 		std::cout << std::setw(210) << std::setfill('#') << '#' << std::endl;
@@ -92,15 +95,14 @@ int main()
 	}
 	}
 
-	
-
 	bool flag = true;
-	size_t size = 10;
-	int mines;
+	size_t size = 1;
+	int mines = 1;
 
 	do
 	{
 		int op; // option
+
 		if (!language)
 		{
 			std::cout << std::setw(108) << std::setfill(' ') << " Выберите размер игрового поля" << std::endl;
@@ -114,18 +116,14 @@ int main()
 
 		std::cout << std::setw(85) << std::setfill(' ') << ' ' << " 1. 10 x 10" << std::endl; // Ten
 		std::cout << std::setw(85) << std::setfill(' ') << ' ' << " 2. 15 x 15" << std::endl; // Fifteen
-
-
 		std::cout << std::setw(92) << std::setfill(' ') << " => "; std::cin >> op;
 		std::cout << std::setw(212) << std::setfill('_') << " \n" << std::endl;
-
 			
 		switch (op)
 		{
 		case Ten:
 		{
 			size = 10;
-			int mines;
 			do
 			{
 				if (!language)
@@ -180,7 +178,6 @@ int main()
 		case Fifteen:
 		{
 			size = 15;
-
 			do
 			{
 				if (!language)
@@ -201,7 +198,6 @@ int main()
 					std::cout << std::setw(80) << std::setfill(' ') << ' ' << " 2. Medium (45 mines)" << std::endl; // Medium
 					std::cout << std::setw(80) << std::setfill(' ') << ' ' << " 3. Hard   (70 mines)" << std::endl; // Hard
 				}
-
 				std::cout << std::setw(92) << std::setfill(' ') << " => "; std::cin >> op;
 				std::cout << std::setw(212) << std::setfill('_') << " \n" << std::endl;
 
@@ -243,6 +239,9 @@ int main()
 	char** GameField = new char* [size];
 
 	EpilepsyTime(language);
-	Create_GameField(GameField, HiddenField, size);
-	Show_GameField(GameField, size);
+	Create_GameField(size, GameField, HiddenField);
+	SetMina(mines, size, GameField, HiddenField);
+	Show_GameField(size, HiddenField);
+
+	} while (new_game);
 }
