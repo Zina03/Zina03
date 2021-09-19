@@ -1,5 +1,5 @@
 #include "Sapper.h"
-
+#include <stdio.h>
 enum SelectLanguage
 {
 	Russian = 0,
@@ -10,7 +10,7 @@ enum SelectMode
 {
 	Easy = 1,
 	Medium,
-    Hard,
+	Hard,
 };
 
 enum SelectSize
@@ -22,226 +22,336 @@ enum SelectSize
 int main()
 {
 	setlocale(0, "");
-	bool new_game = true;
-	do
-	{
-	int language;
+
+	bool flag; // Повторение цикла при ошибках
+	short Game; //Повторение игрового цикла
+
+	size_t size; // Размер поля
+	short mines;  // Количество мин на игровом поле.
+
+	short language;  // Выбор языка
+	short op; // Опции
 
 	std::cout << std::setw(212) << std::setfill('_') << " \n" << std::endl;
-	std::cout << std::setw(100) << std::setfill(' ') << " Select Language:" << std::endl;
-	std::cout << std::setw(212) << std::setfill('_') << " \n" << std::endl;
+	std::cout << std::setw(210) << std::setfill('#') << '#' << std::endl;
+	std::cout << std::setw(210) << std::setfill('#') << '#' << std::endl << std::endl;
 
-	std::cout << std::setw(86) << std::setfill(' ') << ' ' << " 0. Russian" << std::endl; // Russian
-	std::cout << std::setw(86) << std::setfill(' ') << ' ' << " 1. English" << std::endl; // English
-
-	std::cout << std::setw(94) << std::setfill(' ') << " => "; std::cin >> language;
-
-	if (language != 1 && language != 0)
-	{
-		std::cout << std::setw(212) << std::setfill('_') << " \n" << std::endl;
-		std::cout << std::setw(100) << std::setfill(' ') << " Default Russian" << std::endl;
-		std::cout << std::setw(212) << std::setfill('_') << " \n" << std::endl;
-
-		language = 0;
-	}
-
-	switch (language)
-	{
-	case Russian:
-	{
-		std::cout << std::setw(210) << std::setfill('#') << '#' << std::endl;
-		std::cout << std::setw(210) << std::setfill('#') << '#' << std::endl << std::endl;
-		std::cout << std::setw(78) << std::setfill(' ') << ' ' << (char)176 << "Добро пожаловать в игру \"Сапер\"" << (char)176 << std::endl;
-		std::cout << std::setw(55) << std::setfill(' ') << ' ' << " Ваша цель вскрыть пустые ячейки, не вскрыв при этом ни одной, содержащей мину." << std::endl << std::endl;
-
-		std::cout << std::setw(84) << std::setfill(' ') << ' ' << " Правила игры :" << std::endl << std::endl;
-		std::cout << std::setw(55) << std::setfill(' ') << ' ' << " Выбрать определенную координату на поле. При выборе ячейки, она открывается. " << std::endl;
-		std::cout << std::setw(68) << std::setfill(' ') << ' ' << " Если в ней находится мина, то игрок проигрывает. " << std::endl << std::endl;
-		std::cout << std::setw(27) << std::setfill(' ') << ' ' << " Если в самой ячейке мины нет, но есть мины в соседних ячейках, то отображается число, соответствующее количеству мин в соседних ячейках." << std::endl;
-		std::cout << std::setw(40) << std::setfill(' ') << ' ' << " Несколько соседних ячеек с числами указывают на одни и те же мины, что позволяет точно определить опасные клетки. " << std::endl;
-		std::cout << std::setw(45) << std::setfill(' ') << ' ' << " Если ни в самой ячейке, ни в соседних с ней ячейках нет мин, то открываются все соседние пустые ячейки. " << std::endl << std::endl;
-
-		std::cout << std::setw(64) << std::setfill(' ') << ' ' << " Для удобства, ячейки с минами можно помечать флажками." << std::endl;
-		std::cout << std::setw(58) << std::setfill(' ') << ' ' << " Игра выигрывается, как только открыты все ячейки, не содержащие мин." << std::endl << std::endl;
-		std::cout << std::setw(84) << std::setfill(' ') << ' ' << " Удачной вам игры!" << std::endl << std::endl;
-		std::cout << std::setw(210) << std::setfill('#') << '#' << std::endl;
-		std::cout << std::setw(210) << std::setfill('#') << '#' << std::endl;
-		std::cout << std::setw(212) << std::setfill('_') << " \n" << std::endl;
-		break;
-	}
-
-	case English:
-	{
-		std::cout << std::setw(210) << std::setfill('#') << '#' << std::endl;
-		std::cout << std::setw(210) << std::setfill('#') << '#' << std::endl << std::endl;
-
-		std::cout << std::setw(78) << std::setfill(' ') << ' ' << (char)176 << "Welcome to the game \"Minesweeper\"" << (char)176 << std::endl;
-		std::cout << std::setw(60) << std::setfill(' ') << ' ' << " Your goal is to open empty cells without opening any containing mines." << std::endl << std::endl;
-
-		std::cout << std::setw(82) << std::setfill(' ') << ' ' << " Rules of the game :" << std::endl << std::endl;
-		std::cout << std::setw(55) << std::setfill(' ') << ' ' << " Select a specific coordinate on the field. When you select a cell, it opens. " << std::endl;
-		std::cout << std::setw(68) << std::setfill(' ') << ' ' << " If there is a mine in it, the player loses. " << std::endl << std::endl;
-		std::cout << std::setw(20) << std::setfill(' ') << ' ' << " If there is no mine in the cell itself, but there are mines in neighboring cells, then the number corresponding to the number of mines in neighboring cells is displayed." << std::endl;
-		std::cout << std::setw(47) << std::setfill(' ') << ' ' << " Several adjacent numbered slots represent the same mines, allowing you to pinpoint dangerous slots. " << std::endl;
-		std::cout << std::setw(33) << std::setfill(' ') << ' ' << " If there are no mines in either the cell itself or the cells adjacent to it, then all adjacent empty cells are opened. " << std::endl << std::endl;
-
-		std::cout << std::setw(59) << std::setfill(' ') << ' ' << " For convenience, the slots of the shafts can be marked with flags." << std::endl;
-		std::cout << std::setw(56) << std::setfill(' ') << ' ' << " The game is won as soon as all cells that do not contain mines are open." << std::endl << std::endl;
-		std::cout << std::setw(80) << std::setfill(' ') << ' ' << " Good luck with your game!" << std::endl << std::endl;
-		std::cout << std::setw(210) << std::setfill('#') << '#' << std::endl;
-		std::cout << std::setw(210) << std::setfill('#') << '#' << std::endl;
-		std::cout << std::setw(212) << std::setfill('_') << " \n" << std::endl;
-		break;
-	}
-	}
-
-	bool flag = true;
-	size_t size = 1;
-	int mines = 1;
+	EpilepsyTime("Minesweeper game is Loading.");
 
 	do
 	{
-		int op; // option
+		flag = true;
+		Game = true;
 
-		if (!language)
+		// Выбору языка
 		{
-			std::cout << std::setw(108) << std::setfill(' ') << " Выберите размер игрового поля" << std::endl;
-		}
-		else
-		{
-			std::cout << std::setw(110) << std::setfill(' ') << " Select the size of the playing field" << std::endl;
+
+			std::cout << std::endl << std::setw(210) << std::setfill('#') << '#' << std::endl;
+			std::cout << std::setw(210) << std::setfill('#') << '#' << std::endl;
+			std::cout << std::setw(212) << std::setfill('_') << " \n" << std::endl;
+
+			std::cout << std::setw(100) << std::setfill(' ') << " Select Language:" << std::endl;
+			std::cout << std::setw(212) << std::setfill('_') << " \n" << std::endl;
+
+			std::cout << std::setw(85) << std::setfill(' ') << ' ' << " 0. Russian" << std::endl; // Russian
+			std::cout << std::setw(85) << std::setfill(' ') << ' ' << " 1. English" << std::endl; // English
+
+			std::cout << std::setw(94) << std::setfill(' ') << " => ";std::cin >> language;
+			if (language != 0 && language != 1)
+			{
+				std::cout << std::setw(212) << std::setfill('_') << " \n" << std::endl;
+				std::cout << std::setw(100) << std::setfill(' ') << " Default Russian" << std::endl;
+
+				language = 0;
+			}
 		}
 
 		std::cout << std::setw(212) << std::setfill('_') << " \n" << std::endl;
 
-		std::cout << std::setw(85) << std::setfill(' ') << ' ' << " 1. 10 x 10" << std::endl; // Ten
-		std::cout << std::setw(85) << std::setfill(' ') << ' ' << " 2. 15 x 15" << std::endl; // Fifteen
-		std::cout << std::setw(92) << std::setfill(' ') << " => "; std::cin >> op;
-		std::cout << std::setw(212) << std::setfill('_') << " \n" << std::endl;
-			
-		switch (op)
+		// Выбор размера поля
 		{
-		case Ten:
-		{
-			size = 10;
 			do
 			{
+
 				if (!language)
 				{
-					std::cout << std::setw(103) << std::setfill(' ') << " Выберите игровой режим:" << std::endl;
-					std::cout << std::setw(212) << std::setfill('_') << " \n" << std::endl;
-
-					std::cout << std::setw(80) << std::setfill(' ') << ' ' << " 1. Легкий  (10 мин )" << std::endl; // Easy
-					std::cout << std::setw(80) << std::setfill(' ') << ' ' << " 2. Средний (20 мин )" << std::endl; // Medium
-					std::cout << std::setw(80) << std::setfill(' ') << ' ' << " 3. Сложный (30 мин )" << std::endl; // Hard		
+					std::cout << std::setw(108) << std::setfill(' ') << " Выберите размер игрового поля:" << std::endl;
 				}
 				else
 				{
-					std::cout << std::setw(99) << std::setfill(' ') << " Select a Game Mode:" << std::endl;
-					std::cout << std::setw(212) << std::setfill('_') << " \n" << std::endl;
-
-					std::cout << std::setw(80) << std::setfill(' ') << ' ' << " 1. Easy   (10 mines)" << std::endl; // Easy
-					std::cout << std::setw(80) << std::setfill(' ') << ' ' << " 2. Medium (20 mines)" << std::endl; // Medium
-					std::cout << std::setw(80) << std::setfill(' ') << ' ' << " 3. Hard   (30 mines)" << std::endl; // Hard
+					std::cout << std::setw(110) << std::setfill(' ') << " Select the size of the playing field:" << std::endl;
 				}
 
+				std::cout << std::setw(212) << std::setfill('_') << " \n" << std::endl;
+				std::cout << std::setw(85) << std::setfill(' ') << ' ' << " 1. 10 x 10" << std::endl; // Ten
+				std::cout << std::setw(85) << std::setfill(' ') << ' ' << " 2. 15 x 15" << std::endl; // Fifteen
 				std::cout << std::setw(92) << std::setfill(' ') << " => "; std::cin >> op;
 				std::cout << std::setw(212) << std::setfill('_') << " \n" << std::endl;
 
 				switch (op)
 				{
-				case Easy:
+				case Ten:
 				{
-					mines = 10;
-					flag = false;
-					break;
+					size = 10;
+
+					// Выбор Игрового режима
+					{
+						do
+						{
+							if (!language)
+							{
+								std::cout << std::setw(103) << std::setfill(' ') << " Выберите игровой режим:" << std::endl;
+								std::cout << std::setw(212) << std::setfill('_') << " \n" << std::endl;
+
+								std::cout << std::setw(80) << std::setfill(' ') << ' ' << " 1. Легкий  (10 мин )" << std::endl; // Easy
+								std::cout << std::setw(80) << std::setfill(' ') << ' ' << " 2. Средний (20 мин )" << std::endl; // Medium
+								std::cout << std::setw(80) << std::setfill(' ') << ' ' << " 3. Сложный (30 мин )" << std::endl; // Hard		
+							}
+							else
+							{
+								std::cout << std::setw(99) << std::setfill(' ') << " Select a Game Mode:" << std::endl;
+								std::cout << std::setw(212) << std::setfill('_') << " \n" << std::endl;
+
+								std::cout << std::setw(80) << std::setfill(' ') << ' ' << " 1. Easy   (10 mines)" << std::endl; // Easy
+								std::cout << std::setw(80) << std::setfill(' ') << ' ' << " 2. Medium (20 mines)" << std::endl; // Medium
+								std::cout << std::setw(80) << std::setfill(' ') << ' ' << " 3. Hard   (30 mines)" << std::endl; // Hard
+							}
+
+							std::cout << std::setw(92) << std::setfill(' ') << " => "; std::cin >> op;
+							std::cout << std::setw(212) << std::setfill('_') << " \n" << std::endl;
+
+							switch (op)
+							{
+							case Easy:
+							{
+								mines = 10;
+								flag = false;
+								break;
+							}
+							case Medium:
+							{
+								mines = 20;
+								flag = false;
+								break;
+							}
+							case Hard:
+							{
+								mines = 30;
+								flag = false;
+								break;
+							}
+							default:
+								std::cout << std::setw(115) << std::setfill(' ');
+
+								if (!language) std::cout << "Вы ввели что-то не так, попробуйте еще раз!" << std::endl;
+								else std::cout << "You entered something wrong, please try again!" << std::endl;
+								std::cout << std::setw(212) << std::setfill('_') << " \n" << std::endl;
+							}
+						} while (flag);
+						break;
+					}
 				}
-				case Medium:
+				case Fifteen:
 				{
-					mines = 20;
-					flag = false;
-					break;
+					size = 15;
+					// Выбор Игрового режима
+					{
+						do
+						{
+							if (!language)
+							{
+								std::cout << std::setw(103) << std::setfill(' ') << " Выберите игровой режим:" << std::endl;
+								std::cout << std::setw(212) << std::setfill('_') << " \n" << std::endl;
+
+								std::cout << std::setw(80) << std::setfill(' ') << ' ' << " 1. Легкий  (20 мин )" << std::endl; // Easy
+								std::cout << std::setw(80) << std::setfill(' ') << ' ' << " 2. Средний (45 мин )" << std::endl; // Medium
+								std::cout << std::setw(80) << std::setfill(' ') << ' ' << " 3. Сложный (70 мин )" << std::endl; // Hard		
+							}
+							else
+							{
+								std::cout << std::setw(99) << std::setfill(' ') << " Select a Game Mode:" << std::endl;
+								std::cout << std::setw(212) << std::setfill('_') << " \n" << std::endl;
+
+								std::cout << std::setw(80) << std::setfill(' ') << ' ' << " 1. Easy   (20 mines)" << std::endl; // Easy
+								std::cout << std::setw(80) << std::setfill(' ') << ' ' << " 2. Medium (45 mines)" << std::endl; // Medium
+								std::cout << std::setw(80) << std::setfill(' ') << ' ' << " 3. Hard   (70 mines)" << std::endl; // Hard
+							}
+							std::cout << std::setw(92) << std::setfill(' ') << " => "; std::cin >> op;
+							std::cout << std::setw(212) << std::setfill('_') << " \n" << std::endl;
+
+							switch (op)
+							{
+							case Easy:
+							{
+								mines = 20;
+								flag = false;
+								break;
+							}
+							case Medium:
+							{
+								mines = 45;
+								flag = false;
+								break;
+							}
+							case Hard:
+							{
+								mines = 70;
+								flag = false;
+								break;
+							}
+							default:
+								std::cout << std::setw(115) << std::setfill(' ');
+
+								if (!language) std::cout << "Вы ввели что-то не так, попробуйте еще раз!" << std::endl;
+								else std::cout << "You entered something wrong, please try again!" << std::endl;
+								std::cout << std::setw(212) << std::setfill('_') << " \n" << std::endl;
+							}
+						} while (flag);
+						break;
+					}
 				}
-				case Hard:
-				{
-					mines = 30;
-					flag = false;
-					break;
-				}
+
 				default:
-					std::cout << std::setw(88) << std::setfill(' ') << " Try again!" << std::endl;
+					std::cout << std::setw(115) << std::setfill(' ');
+
+					if (!language) std::cout << "Вы ввели что-то не так, попробуйте еще раз!" << std::endl;
+					else std::cout << "You entered something wrong, please try again!" << std::endl;
 					std::cout << std::setw(212) << std::setfill('_') << " \n" << std::endl;
 				}
 			} while (flag);
+		}
+
+		// Заголовок игры по выбору языка
+		switch (language)
+		{
+		case Russian:
+		{
+			std::cout << std::setw(210) << std::setfill('#') << '#' << std::endl;
+			std::cout << std::setw(210) << std::setfill('#') << '#' << std::endl << std::endl;
+			std::cout << std::setw(78) << std::setfill(' ') << ' ' << (char)176 << "Добро пожаловать в игру \"Сапер\"" << (char)176 << std::endl;
+			std::cout << std::setw(55) << std::setfill(' ') << ' ' << " Ваша цель вскрыть пустые ячейки, не вскрыв при этом ни одной, содержащей мину." << std::endl << std::endl;
+
+			std::cout << std::setw(84) << std::setfill(' ') << ' ' << " Правила игры :" << std::endl << std::endl;
+			std::cout << std::setw(55) << std::setfill(' ') << ' ' << " Выбрать определенную координату на поле. При выборе ячейки, она открывается. " << std::endl;
+			std::cout << std::setw(68) << std::setfill(' ') << ' ' << " Если в ней находится мина, то игрок проигрывает. " << std::endl << std::endl;
+			std::cout << std::setw(27) << std::setfill(' ') << ' ' << " Если в самой ячейке мины нет, но есть мины в соседних ячейках, то отображается число, соответствующее количеству мин в соседних ячейках." << std::endl;
+			std::cout << std::setw(40) << std::setfill(' ') << ' ' << " Несколько соседних ячеек с числами указывают на одни и те же мины, что позволяет точно определить опасные клетки. " << std::endl;
+			std::cout << std::setw(45) << std::setfill(' ') << ' ' << " Если ни в самой ячейке, ни в соседних с ней ячейках нет мин, то открываются все соседние пустые ячейки. " << std::endl << std::endl;
+
+			std::cout << std::setw(64) << std::setfill(' ') << ' ' << " Для удобства, ячейки с минами можно помечать флажками." << std::endl;
+			std::cout << std::setw(58) << std::setfill(' ') << ' ' << " Игра выигрывается, как только открыты все ячейки, не содержащие мин." << std::endl << std::endl;
+			std::cout << std::setw(84) << std::setfill(' ') << ' ' << " Удачной вам игры!" << std::endl << std::endl;
+			std::cout << std::setw(210) << std::setfill('#') << '#' << std::endl;
+			std::cout << std::setw(210) << std::setfill('#') << '#' << std::endl;
+			std::cout << std::setw(212) << std::setfill('_') << " \n" << std::endl;
+			EpilepsyTime("Запуск игры.");
 			break;
 		}
-		case Fifteen:
+
+		case English:
 		{
-			size = 15;
-			do
+			std::cout << std::setw(210) << std::setfill('#') << '#' << std::endl;
+			std::cout << std::setw(210) << std::setfill('#') << '#' << std::endl << std::endl;
+
+			std::cout << std::setw(78) << std::setfill(' ') << ' ' << (char)176 << "Welcome to the game \"Minesweeper\"" << (char)176 << std::endl;
+			std::cout << std::setw(60) << std::setfill(' ') << ' ' << " Your goal is to open empty cells without opening any containing mines." << std::endl << std::endl;
+
+			std::cout << std::setw(82) << std::setfill(' ') << ' ' << " Rules of the game :" << std::endl << std::endl;
+			std::cout << std::setw(55) << std::setfill(' ') << ' ' << " Select a specific coordinate on the field. When you select a cell, it opens. " << std::endl;
+			std::cout << std::setw(68) << std::setfill(' ') << ' ' << " If there is a mine in it, the player loses. " << std::endl << std::endl;
+			std::cout << std::setw(20) << std::setfill(' ') << ' ' << " If there is no mine in the cell itself, but there are mines in neighboring cells, then the number corresponding to the number of mines in neighboring cells is displayed." << std::endl;
+			std::cout << std::setw(47) << std::setfill(' ') << ' ' << " Several adjacent numbered slots represent the same mines, allowing you to pinpoint dangerous slots. " << std::endl;
+			std::cout << std::setw(33) << std::setfill(' ') << ' ' << " If there are no mines in either the cell itself or the cells adjacent to it, then all adjacent empty cells are opened. " << std::endl << std::endl;
+
+			std::cout << std::setw(59) << std::setfill(' ') << ' ' << " For convenience, the slots of the shafts can be marked with flags." << std::endl;
+			std::cout << std::setw(56) << std::setfill(' ') << ' ' << " The game is won as soon as all cells that do not contain mines are open." << std::endl << std::endl;
+			std::cout << std::setw(80) << std::setfill(' ') << ' ' << " Good luck with your game!" << std::endl << std::endl;
+			std::cout << std::setw(210) << std::setfill('#') << '#' << std::endl;
+			std::cout << std::setw(210) << std::setfill('#') << '#' << std::endl;
+			std::cout << std::setw(212) << std::setfill('_') << " \n" << std::endl;
+			EpilepsyTime("Launching the game.");
+			break;
+		}
+		}
+
+
+		bool** HiddenField = new bool* [size];
+		char** GameField = new char* [size];
+
+		Create_GameField(size, GameField, HiddenField);
+		SetMina(mines, size, GameField, HiddenField);
+		Display_Mines(size, HiddenField);
+		Display_GameField(size, GameField);
+
+
+		// Запрос на повторение игры
+		{
+			if (!language)
 			{
-				if (!language)
+				std::cout << std::setw(212) << std::setfill('_') << " \n" << std::endl;
+				std::cout << std::setw(110) << std::setfill(' ') << "Вы хотите начать новую игру?" << std::endl;
+				std::cout << std::setw(212) << std::setfill('_') << " \n" << std::endl;
+
+				std::cout << std::setw(90) << std::setfill(' ') << ' ' << " 0. Нет" << std::endl; // No
+				std::cout << std::setw(90) << std::setfill(' ') << ' ' << " 1. Да" << std::endl; // Yes
+
+				std::cout << std::setw(95) << std::setfill(' ') << " => "; std::cin >> Game;
+				std::cout << std::setw(212) << std::setfill('_') << " \n" << std::endl;
+
+				if (Game != 0 && Game != 1)
 				{
-					std::cout << std::setw(103) << std::setfill(' ') << " Выберите игровой режим:" << std::endl;
+					std::cout << std::setw(102) << std::setfill(' ') << " По умолчанию Нет!" << std::endl;
 					std::cout << std::setw(212) << std::setfill('_') << " \n" << std::endl;
 
-					std::cout << std::setw(80) << std::setfill(' ') << ' ' << " 1. Легкий  (20 мин )" << std::endl; // Easy
-					std::cout << std::setw(80) << std::setfill(' ') << ' ' << " 2. Средний (45 мин )" << std::endl; // Medium
-					std::cout << std::setw(80) << std::setfill(' ') << ' ' << " 3. Сложный (70 мин )" << std::endl; // Hard		
+					Game = 0;
+				}
+
+				if (!Game)
+				{
+					std::cout << std::setw(100) << std::setfill(' ') << " До свидания!" << std::endl;
+					std::cout << std::setw(212) << std::setfill('_') << " \n" << std::endl;
 				}
 				else
 				{
-					std::cout << std::setw(99) << std::setfill(' ') << " Select a Game Mode:" << std::endl;
-					std::cout << std::setw(212) << std::setfill('_') << " \n" << std::endl;
-
-					std::cout << std::setw(80) << std::setfill(' ') << ' ' << " 1. Easy   (20 mines)" << std::endl; // Easy
-					std::cout << std::setw(80) << std::setfill(' ') << ' ' << " 2. Medium (45 mines)" << std::endl; // Medium
-					std::cout << std::setw(80) << std::setfill(' ') << ' ' << " 3. Hard   (70 mines)" << std::endl; // Hard
+					std::cout << std::setw(210) << std::setfill('#') << '#' << std::endl;
+					std::cout << std::setw(210) << std::setfill('#') << '#' << std::endl << std::endl;
+					EpilepsyTime("Игра «Сапер» загружается.");
 				}
-				std::cout << std::setw(92) << std::setfill(' ') << " => "; std::cin >> op;
+			}
+			else
+			{
+				std::cout << std::setw(212) << std::setfill('_') << " \n" << std::endl;
+				std::cout << std::setw(110) << std::setfill(' ') << " Do you want to start a new game?" << std::endl;
 				std::cout << std::setw(212) << std::setfill('_') << " \n" << std::endl;
 
-				switch (op)
+				std::cout << std::setw(90) << std::setfill(' ') << ' ' << " 0. No" << std::endl; // No
+				std::cout << std::setw(90) << std::setfill(' ') << ' ' << " 1. Yes" << std::endl; // Yes
+
+				std::cout << std::setw(95) << std::setfill(' ') << " => "; std::cin >> Game;
+				std::cout << std::setw(212) << std::setfill('_') << " \n" << std::endl;
+
+				if (Game != 0 && Game != 1)
 				{
-				case Easy:
-				{
-					mines = 20;
-					flag = false;
-					break;
+					std::cout << std::setw(99) << std::setfill(' ') << " Default No!" << std::endl;
+					std::cout << std::setw(212) << std::setfill('_') << " \n" << std::endl;
+
+					Game = 0;
 				}
-				case Medium:
+
+				if (!Game)
 				{
-					mines = 45;
-					flag = false;
-					break;
-				}
-				case Hard:
-				{
-					mines = 70;
-					flag = false;
-					break;
-				}
-				default:
-					std::cout << std::setw(88) << std::setfill(' ') << " Try again!" << std::endl;
+					std::cout << std::setw(98) << std::setfill(' ') << " Goodbye!" << std::endl;
 					std::cout << std::setw(212) << std::setfill('_') << " \n" << std::endl;
 				}
-			} while (flag);			
-			break;
+				else
+				{
+					std::cout << std::setw(210) << std::setfill('#') << '#' << std::endl;
+					std::cout << std::setw(210) << std::setfill('#') << '#' << std::endl << std::endl;
+					EpilepsyTime("Minesweeper game is Loading.");
+				}
+			}
 		}
-		
-		default:
-			std::cout << std::setw(95) << std::setfill(' ') << " Try again!" << std::endl;
-			std::cout << std::setw(212) << std::setfill('_') << " \n" << std::endl;
-		}
-	} while (flag);
+		Delete_Game(size, GameField, HiddenField);
 
-	bool** HiddenField = new bool* [size];
-	char** GameField = new char* [size];
-
-	EpilepsyTime(language);
-	Create_GameField(size, GameField, HiddenField);
-	SetMina(mines, size, GameField, HiddenField);
-	Show_GameField(size, HiddenField);
-
-	} while (new_game);
+	} while (Game);
 }
