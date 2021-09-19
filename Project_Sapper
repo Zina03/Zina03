@@ -274,14 +274,51 @@ int main()
 		}
 		}
 
-
 		bool** HiddenField = new bool* [size];
 		char** GameField = new char* [size];
-
 		Create_GameField(size, GameField, HiddenField);
-		SetMina(mines, size, GameField, HiddenField);
+
 		Display_Mines(size, HiddenField);
 		Display_GameField(size, GameField);
+
+		bool _continue;
+		short horizontal_coordinat;
+		char  vertical_coordinat;
+		bool integers = 0;
+		do
+		{
+			flag = true;
+			do
+			{
+				std::cout << std::setw(80) << std::setfill(' ') << ' ' << "Shot pleace" << std::endl;
+				std::cout << std::setw(212) << std::setfill('_') << " \n" << std::endl;
+
+				std::cout << std::setw(67) << std::setfill(' ') << ' ' << " Input Horizontal + Vertical coordinat (ex: A1) => "; std::cin >> vertical_coordinat >> horizontal_coordinat;
+
+				if (!(vertical_coordinat >= 65 && vertical_coordinat < vertical_coordinat + size) || !(horizontal_coordinat >= 0 && horizontal_coordinat < size))
+				{
+					flag = false;
+					std::cout << std::setw(115) << std::setfill(' ');
+					if (!language) std::cout << "Вы ввели что-то не так, попробуйте еще раз!" << std::endl;
+					else std::cout << "You entered something wrong, please try again!" << std::endl;
+					std::cout << std::setw(212) << std::setfill('_') << " \n" << std::endl;
+				}
+
+			} while (!flag);
+
+			if (!integers)
+			{
+				SetMina(mines, size, GameField, HiddenField, vertical_coordinat - 65, horizontal_coordinat);
+				_continue = Impact(vertical_coordinat - 65, horizontal_coordinat, size, GameField, HiddenField);
+
+				integers = true;
+			}
+
+			_continue = Impact(vertical_coordinat - 65, horizontal_coordinat, size, GameField, HiddenField);
+			Display_Mines(size, HiddenField);
+			Display_GameField(size, GameField);
+
+		} while (_continue);
 
 
 		// Запрос на повторение игры
