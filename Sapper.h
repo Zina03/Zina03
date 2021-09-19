@@ -16,16 +16,15 @@ void EpilepsyTime(const char* text);  // Веселая загрузка игр�
 
 void Create_GameField(size_t size, char** GameField, bool** HiddenField); // Создание игрового поля. Заполнение определенными символами
 
-void SetMina(int mina, size_t size, char** GameField, bool** HiddenField); // Рандомизируем мины вокруг поля
+void SetMina(int mina, size_t size, char** GameField, bool** HiddenField , short vertical_coordinat, short horizontal_coordinat); // Рандомизируем мины вокруг поля
 
 
 void Display_GameField(size_t size, char** Field); // Отображение игрового поля
 void Display_Mines (size_t size, bool** Mines); // Отображение игрового поля с минами
 
-bool Impact(short vertical_coordinat, short horizontal_coordinat, char** GameField, bool** HiddenField);
+bool Impact(short vertical_coordinat, short horizontal_coordinat, size_t size, char** GameField, bool** HiddenField, int integers = 0);
 
 void Delete_Game(size_t size, char** GameField, bool** HiddenField);
-
 
 
 // Sapper.cpp
@@ -55,7 +54,7 @@ auto Delete_array(size_t size, T** arr)
 void EpilepsyTime(const char* text) // Веселая загрузка игры 
 {
 	std::cout << std::setw(100) << std::setfill(' ') << text;
-	
+
 	Sleep(500);
 
 	int disco_time = 0;
@@ -107,8 +106,9 @@ void Create_GameField(size_t size, char** GameField, bool** HiddenField) // Со
 	}
 }
 
-void SetMina(int mina, size_t size, char** GameField, bool** HiddenField) // Рандомизируем мины вокруг поля
+void SetMina(int mina, size_t size, char** GameField, bool** HiddenField, short vertical_coordinat, short horizontal_coordinat) // Рандомизируем мины вокруг поля
 {
+	HiddenField[vertical_coordinat][horizontal_coordinat] = 1;
 	for (int i = 0; i < mina;)
 	{
 		int x = rand() % size; // случайные числа из диапазона 0 <-> size
@@ -120,6 +120,7 @@ void SetMina(int mina, size_t size, char** GameField, bool** HiddenField) // Р�
 			i++;
 		}
 	}
+	HiddenField[vertical_coordinat][horizontal_coordinat] = 0;
 }
 
 void Display_GameField(size_t size, char** Field) // Отображение игрового поля
@@ -133,7 +134,7 @@ void Display_GameField(size_t size, char** Field) // Отображение иг
 	{
 		if (i > 8)
 		{
-			std::cout << i++ << "  "; 
+			std::cout << i++ << "  ";
 		}
 		else
 		{
@@ -166,7 +167,7 @@ void Display_Mines(size_t size, bool** Mines) // Отображение игро
 	{
 		if (i > 8)
 		{
-			std::cout << i++ << "  "; 
+			std::cout << i++ << "  ";
 		}
 		else
 		{
@@ -189,9 +190,41 @@ void Display_Mines(size_t size, bool** Mines) // Отображение игро
 
 }
 
-bool Impact(short vertical_coordinat, short horizontal_coordinat, char** GameField, bool** HiddenField) // Воздействие на конкретную координату
+bool Impact(short vertical_coordinat, short horizontal_coordinat, size_t size, char** GameField, bool** HiddenField, int integers = 0) // Воздействие на конкретную координату
 {
 	if (HiddenField[vertical_coordinat][horizontal_coordinat]) return false; // Вы задели мину
+	
+	int index = 1;
+	int cnt = 0;
+
+	for (int i = vertical_coordinat - 1; i <= vertical_coordinat + 1 && i < size; i++)
+	{
+		for (int j = horizontal_coordinat - 1; j <= horizontal_coordinat + 1 && j < size; j++)
+		{
+			if (i >= 0 && j >= 0) cnt += HiddenField[i][j];
+		}
+	}
+	if (!integers)
+	{
+		integers++;
+		cnt+= HiddenField[vertical_coordinat][horizontal_coordinat];
+	}
+
+	if (cnt == 0)
+	{
+		for (int i = vertical_coordinat - i; i <= vertical_coordinat + i && i < size; i++)
+		{
+			for (int j = horizontal_coordinat - i; j <= horizontal_coordinat + i && j < size; j++)
+			{
+				if (!HiddenField[i][j])
+			}
+		}
+	}
+	else
+	{
+		GameField[vertical_coordinat][horizontal_coordinat] = cnt + 0x30;
+	}
+	return true;
 }
 
 void Delete_Game(size_t size, char** GameField, bool** HiddenField)
