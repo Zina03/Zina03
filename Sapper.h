@@ -7,7 +7,7 @@
 #include <ios>
 
 template<typename T>
-auto Create_array(size_t size, T** arr); // 
+auto Create_array(size_t size, T** arr);
 
 template<typename T>
 auto Delete_array(size_t size, T** arr);
