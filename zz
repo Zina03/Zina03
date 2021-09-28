@@ -1,5 +1,6 @@
 // cpp.
-#include "Header.h"
+
+#include "sapper.h"
 
 template<typename T>
 auto Create_array(size_t size, T** arr)
@@ -74,9 +75,9 @@ void Wrong()
 	}
 }
 
-void Create_GameField(size_t size, char** GameField, char** MinaBoard, bool** HiddenField) // Создание игрового поля. Заполнение определенными символами
+void Create_GameField(size_t size, char** Field, char** MinaBoard, bool** HiddenField) // Создание игрового поля. Заполнение определенными символами
 {
-	Create_array(size, GameField);
+	Create_array(size, Field);
 	Create_array(size, MinaBoard);
 	Create_array(size, HiddenField);
 
@@ -86,16 +87,16 @@ void Create_GameField(size_t size, char** GameField, char** MinaBoard, bool** Hi
 	{
 		for (int j = 0; j < size; j++)
 		{
-			GameField[i][j] = symbol;
+			Field[i][j] = symbol;
 			MinaBoard[i][j] = ' ';
 			HiddenField[i][j] = 0;
 		}
 	}
 }
 
-void SetMina(int mina, size_t size, char** MinaBoard, bool** HiddenField, short vertical_coordinat, short horizontal_coordinat) // Рандомизируем мины вокруг поля
+void SetMina(int mina, size_t size, char** MinaBoard, bool** HiddenField, short vertical, short horizontal) // Рандомизируем мины вокруг поля
 {
-	HiddenField[vertical_coordinat][horizontal_coordinat] = 1;
+	HiddenField[vertical][horizontal] = 1;
 	for (int i = 0; i < mina;)
 	{
 		int x = rand() % size; // случайные числа из диапазона 0 <-> size
@@ -108,7 +109,7 @@ void SetMina(int mina, size_t size, char** MinaBoard, bool** HiddenField, short 
 		}
 	}
 
-	HiddenField[vertical_coordinat][horizontal_coordinat] = 0;
+	HiddenField[vertical][horizontal] = 0;
 
 	for (int i = 0; i < size; i++)
 	{
@@ -116,13 +117,13 @@ void SetMina(int mina, size_t size, char** MinaBoard, bool** HiddenField, short 
 		{
 			if (HiddenField[i][j] == 1)
 			{
-				MinaBoard[i][j] = '*';
+				MinaBoard[i][j] = 2;
 			}
 		}
 	}
 
-	short vertical = 0;
-	short horizontal = 0;
+	vertical = 0;
+	horizontal = 0;
 	int count = 0;
 	bool flag = true;
 	// 
@@ -196,29 +197,30 @@ void SetMina(int mina, size_t size, char** MinaBoard, bool** HiddenField, short 
 				vertical++;
 			}
 		} while (flag);
+		
 	}
 }
 
-bool Check_coordinats(size_t size, char& vertical_coordinat, short horizontal_coordinat) // Проверка координатов
+bool Check_coordinats(size_t size, char& vertical, short horizontal) // Проверка координатов
 {
-	if (char(vertical_coordinat - 32) >= 65 && char(vertical_coordinat - 32) < (65 + size))
+	if (char(vertical - 32) >= 65 && char(vertical - 32) < (65 + size))
 	{
-		vertical_coordinat -= 32;
+		vertical -= 32;
 	}
 
-	if (!(vertical_coordinat >= 65 && vertical_coordinat < (65 + size)))
+	if (!(vertical >= 65 && vertical < (65 + size)))
 	{
 		return false;
 	}
 
-	if (!(horizontal_coordinat >= 0 && horizontal_coordinat < size))
+	if (!(horizontal >= 0 && horizontal < size))
 	{
 		return false;
 	}
 	return true;
 }
 
-void Display_GameField(size_t size, char** GameField) // Отображение игрового поля
+void Display_GameField(size_t size, char** Field) // Отображение игрового поля
 {
 	char vertical_coordinates = 65; // Чтобы добавить вертикальные координаты, например буква ('A', 'B'...)
 
@@ -244,7 +246,7 @@ void Display_GameField(size_t size, char** GameField) // Отображение 
 		std::cout << std::setw(70) << std::setfill(' ') << (char)(vertical_coordinates + i) << " |  ";
 		for (int j = 0; j < size; j++)
 		{
-			std::cout << GameField[i][j] << "   ";
+			std::cout << Field[i][j] << "   ";
 		}
 		std::cout << '\n';
 	}
@@ -285,83 +287,142 @@ void Display_Mines(size_t size, bool** Mines) // Отображение игро
 
 }
 
-void MakeSpace(short vertical_coordinat, short horizontal_coordinat, size_t size, char** GameField, char** MinaBoard)
+void MakeVerticalSpace(short vertical, short horizontal, size_t size, char** Field, char** MinaBoard)
 {
-	/*
-	if (vertical_coordinat == 0)
+	// Up
+
+	for (int i = vertical; i >= 0; )
 	{
-		if (!horizontal_coordinat)
+		if (MinaBoard[i][horizontal] == '0')
 		{
-			for (int i = vertical_coordinat; i > 0 && i < size; i++)
-			{
-				for (int j = horizontal_coordinat; j > 0 && j < size; j++)
-				{
-					if (MinaBoard[i][j] == '0')
-					{
-						GameField[i][j] = ' ';
-					}
-				}
-			}
+			Field[i][horizontal] = ' ';
+			i--;
 		}
-		else
+		else if (MinaBoard[i][horizontal] >= 49 && MinaBoard[i][horizontal] <= 57)
 		{
-			for (int i = vertical_coordinat; i > 0 && i < size; i++)
-			{
-				for (int j = horizontal_coordinat - 1; j > 0 && j < size; j++)
-				{
-					if (MinaBoard[i][j] == '0')
-					{
-						GameField[i][j] = ' ';
-					}
-				}
-			}
+			Field[i][horizontal] = MinaBoard[i][horizontal];
+			break;
 		}
 	}
 
-	else
+	// Down
+
+	for (int i = vertical; i < size; )
 	{
-		if (horizontal_coordinat == 0)
+		if (MinaBoard[i][horizontal] == '0')
 		{
-
-
-
-			for (int i = vertical_coordinat - 1; i > 0 && i < size; i++)
-			{
-				for (int j = horizontal_coordinat; j > 0 && j < size; j++)
-				{
-					if (MinaBoard[i][j] == '0')
-					{
-						GameField[i][j] = ' ';
-					}
-				}
-			}
+			Field[i][horizontal] = ' ';
+			i++;
 		}
-		else
+		else if (MinaBoard[i][horizontal] >= 49 && MinaBoard[i][horizontal] <= 57)
 		{
-			for (int i = vertical_coordinat - 1; i > 0 && i < size; i++)
-			{
-				for (int j = horizontal_coordinat - 1; j > 0 && j < size; j++)
-				{
-					if (MinaBoard[i][j] == '0')
-					{
-						GameField[i][j] = ' ';
-					}
-				}
-			}
+			Field[i][horizontal] = MinaBoard[i][horizontal];
+			break;
 		}
+	}
+}
+void MakeHorizontalSpace(short vertical, short horizontal, size_t size, char** Field, char** MinaBoard)
+{
+	// Right
 
-	}*/
+	for (int j = horizontal; j < size; )
+	{
+		if (MinaBoard[vertical][j] == '0')
+		{
+			Field[vertical][j] = ' ';
+
+			j++;
+		}
+		else if (MinaBoard[vertical][j] >= 49 && MinaBoard[vertical][j] <= 57)
+		{
+			Field[vertical][j] = MinaBoard[vertical][j];
+			break;
+		}
+	}
+
+	// Left
+
+	for (int j = horizontal; j >= 0; )
+	{
+		if (MinaBoard[vertical][j] == '0')
+		{
+			Field[vertical][j] = ' ';
+
+			j--;
+		}
+		else if (MinaBoard[vertical][j] >= 49 && MinaBoard[vertical][j] <= 57)
+		{
+			Field[vertical][j] = MinaBoard[vertical][j];
+			break;
+		}
+	}
+}
+void MakeDiaqonalSpace(short vertical_coor, short horizontal_coor, size_t size, char** Field, char** MinaBoard)
+{
+	// Right diagonal
+
+	for (int i = vertical_coor - 1, j = horizontal_coor + 1; i >= 0 && j < size;)
+	{
+		if (MinaBoard[i][j] == '0')
+		{
+			Field[i][j] = ' ';
+			MakeVerticalSpace(i, j, size, Field, MinaBoard);
+			MakeHorizontalSpace(i, j, size, Field, MinaBoard);
+			i--;
+			j++;
+		}
+		else if (MinaBoard[i][j] >= 49 && MinaBoard[i][j] <= 57)
+		{
+			Field[i][j] = MinaBoard[i][j];
+			break;
+		}
+	}
+
+	// Left diagonal
+
+	for (int i = vertical_coor + 1, j = horizontal_coor - 1; i < size && j >= 0;)
+	{
+		if (MinaBoard[i][j] == '0')
+		{
+			Field[i][j] = ' ';
+			MakeVerticalSpace(i, j, size, Field, MinaBoard);
+			MakeHorizontalSpace(i, j, size, Field, MinaBoard);
+			i++; j--;
+		}
+		else if (MinaBoard[i][j] >= 49 && MinaBoard[i][j] <= 57)
+		{
+			Field[i][j] = MinaBoard[i][j];
+			break;
+		}
+	}
 }
 
-bool IsWinner(size_t size, char** GameField, char** MinaBoard)
+void MakeSpace(short vertical, short horizontal, size_t size, char** Field, char** MinaBoard)
+{
+	MakeVerticalSpace(vertical, horizontal, size, Field, MinaBoard);
+	MakeHorizontalSpace(vertical, horizontal, size, Field, MinaBoard);
+	MakeDiaqonalSpace(vertical, horizontal, size, Field, MinaBoard);
+}
+
+bool IsWinner(size_t size, char** Field, char** MinaBoard)
 {
 	bool win = true;
+	for (int i = 0; i < size; i++)
+	{
+		for (int j = 0; j < size; j++)
+		{
+			if (Field[i][j] == ' ')
+			{
+				Field[i][j] == '0';
+			}
+		}
+	}
 
 	for (int i = 0; i < size; i++)
 	{
 		for (int j = 0; j < size; j++)
 		{
-			if (GameField[i][j] != MinaBoard[i][j])
+			if (Field[i][j] != MinaBoard[i][j])
 			{
 				win = false;
 				break;
@@ -369,39 +430,33 @@ bool IsWinner(size_t size, char** GameField, char** MinaBoard)
 		}
 	}
 
-	if (win)
-	{
-		return true;
-	}
-
-	return false;
+	
+	return win;
 }
 
-bool Impact(short vertical_coordinat, short horizontal_coordinat, size_t size, char** GameField, char** MinaBoard) // Воздействие на конкретную координату
+bool Impact(short vertical, short horizontal, size_t size, char** Field, char** MinaBoard) // Воздействие на конкретную координату
 {
-		if (MinaBoard[vertical_coordinat][horizontal_coordinat] == '*') return false; // Вы задели мину
+	if (MinaBoard[vertical][horizontal] == 2) return false; // Вы задели мину
 
-		else if (MinaBoard[vertical_coordinat][horizontal_coordinat] == ' ')
-		{
-			// MakeSpace(vertical_coordinat, horizontal_coordinat, size, GameField, MinaBoard);
-			GameField[vertical_coordinat][horizontal_coordinat] = ' ';
-		}
-
-		else
-		{
-			GameField[vertical_coordinat][horizontal_coordinat] = MinaBoard[vertical_coordinat][horizontal_coordinat];
-		}
-
-		return true;
+	else if (MinaBoard[vertical][horizontal] == '0')
+	{
+		MakeSpace(vertical, horizontal, size, Field, MinaBoard);
 	}
 
-void Deleting_GameOptions(size_t size, char** GameField, char** MinaBoard, bool** HiddenField)
+	else
+	{
+		Field[vertical][horizontal] = MinaBoard[vertical][horizontal];
+	}
+
+	return true;
+}
+
+void Deleting_GameOptions(size_t size, char** Field, char** MinaBoard, bool** HiddenField)
 {
-	Delete_array(size, GameField);
+	Delete_array(size, Field);
 	Delete_array(size, MinaBoard);
 	Delete_array(size, HiddenField);
 }
-
 
 //h.
 #pragma once
@@ -412,36 +467,38 @@ void Deleting_GameOptions(size_t size, char** GameField, char** MinaBoard, bool*
 #include <ios>
 
 template<typename T>
-auto Create_array(size_t size, T** arr);
+auto Create_array(size_t, T**);
 
 template<typename T>
-auto Delete_array(size_t size, T** arr);
+auto Delete_array(size_t, T**);
 
-void EpilepsyTime(const char* text);  // Веселая загрузка игры 
+void EpilepsyTime(const char*);  // Веселая загрузка игры 
 
 void Wrong();  // Когда пользователь допустил ошибку при наборе текста
 
-void Create_GameField(size_t size, char** GameField, char** MinaBoard, bool** HiddenField); // Создание игрового поля. Заполнение определенными символами
+void Create_GameField(size_t, char**, char**, bool**); // Создание игрового поля. Заполнение определенными символами
 
-void SetMina(int mina, size_t size, char** MinaBoard, bool** HiddenField, short vertical_coordinat, short horizontal_coordinat); // Рандомизируем мины вокруг поля
+void SetMina(int mina, size_t, char**, bool**, short, short); // Рандомизируем мины вокруг поля
 
-bool Check_coordinats(size_t size, char& vertical_coordinat, short horizontal_coordinat); // Проверка координатов
+bool Check_coordinats(size_t, char&, short); // Проверка координатов
 
-void Display_GameField(size_t size, char** GameField); // Отображение игрового поля
-void Display_Mines(size_t size, bool** Mines); // Отображение игрового поля с минами
+void Display_GameField(size_t, char**); // Отображение игрового поля
+void Display_Mines(size_t, bool**); // Отображение игрового поля с минами
 
-void MakeSpace(short vertical_coordinat, short horizontal_coordinat, size_t size, char** GameField, char** MinaBoard);
-bool IsWinner(size_t size, char** GameField, char** MinaBoard);
-bool Impact(short vertical_coordinat, short horizontal_coordinat, size_t size, char** GameField, char** MinaBoard);
+void MakeVerticalSpace(short, short, size_t size, char**, char**);
+void MakeHorizontalSpace(short, short, size_t size, char**, char**);
+void MakeDiaqonalSpace(short, short, size_t size, char**, char**);
 
-void Deleting_GameOptions(size_t size, char** GameField, char** MinaBoard, bool** HiddenField);
+void MakeSpace(short, short, size_t size, char**, char**);
+bool IsWinner(size_t, char**, char**);
+bool Impact(short, short, size_t, char**, char**);
+
+void Deleting_GameOptions(size_t, char**, char**, bool**);
 
 
 //main
 
-
-#include "Header.h"
-#include <stdio.h>
+#include "sapper.h"
 enum SelectLanguage
 {
 	Russian = 0,
@@ -463,14 +520,14 @@ enum SelectSize
 
 int main()
 {
-
 	setlocale(LC_ALL, "Russian");
+	srand(time(nullptr));
 
 	bool flag;   // Повторение цикла при ошибках
 	short Game; // Повторение игрового цикла
 
-	size_t size = 5; // Размер поля
-	short mines = 24;  // Количество мин на игровом поле.
+	size_t size = 10; // Размер поля
+	short mines = 2;  // Количество мин на игровом поле.
 
 	short language = 1;  // Выбор языка
 	short op; // Опции
@@ -740,7 +797,6 @@ int main()
 		}
 
 
-
 		bool** HiddenField = new bool* [size]; // Поле, где отображаются мины
 		char** GameField = new char* [size];  // Игровые поля для геймера
 		char** MinaBoard = new char* [size]; // Поле, где ставятся мины и числа
@@ -792,9 +848,8 @@ int main()
 					}
 
 					_continue = Impact(vertical_coordinat - 65, horizontal_coordinat, size, GameField, MinaBoard);
-					Display_Mines(size, HiddenField);
 					Display_GameField(size, GameField);
-					Display_GameField(size, MinaBoard); // Отображение игрового поля
+					Display_GameField(size, MinaBoard);
 
 				}
 				else
@@ -886,9 +941,3 @@ int main()
 
 	} while (Game);
 }
-
-/*
-
-
-
-*/
