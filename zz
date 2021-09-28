@@ -197,7 +197,7 @@ void SetMina(int mina, size_t size, char** MinaBoard, bool** HiddenField, short 
 				vertical++;
 			}
 		} while (flag);
-		
+
 	}
 }
 
@@ -293,9 +293,54 @@ void MakeVerticalSpace(short vertical, short horizontal, size_t size, char** Fie
 
 	for (int i = vertical; i >= 0; )
 	{
+		if (vertical - 1 >= 0)
+		{
+			if (MinaBoard[i][horizontal - 1] >= 49 && MinaBoard[i][horizontal - 1] <= 57)
+			{
+				Field[i][horizontal - 1] = MinaBoard[i][horizontal - 1];
+			}
+			if (MinaBoard[i][horizontal - 1] == '0')
+			{
+				Field[i][horizontal - 1] = ' ';
+			}
+		}
+		if (vertical + 1 < size)
+		{
+			if (MinaBoard[i][horizontal + 1] >= 49 && MinaBoard[i][horizontal + 1] <= 57)
+			{
+				Field[i][horizontal + 1] = MinaBoard[i][horizontal + 1];
+			}
+			if (MinaBoard[i][horizontal + 1] == '0')
+			{
+				Field[i][horizontal + 1] = ' ';
+			}
+		}
+
 		if (MinaBoard[i][horizontal] == '0')
 		{
 			Field[i][horizontal] = ' ';
+			if (vertical - i >= 0)
+			{
+				if (MinaBoard[i][horizontal - i] >= 49 && MinaBoard[i][horizontal - i] <= 57)
+				{
+					Field[i][horizontal - i] = MinaBoard[i][horizontal - i];
+				}
+				if (MinaBoard[i][horizontal - i] == '0')
+				{
+					Field[i][horizontal - i] = ' ';
+				}
+			}
+			if (vertical + i < size)
+			{
+				if (MinaBoard[i][horizontal + i] >= 49 && MinaBoard[i][horizontal + i] <= 57)
+				{
+					Field[i][horizontal + i] = MinaBoard[i][horizontal + i];
+				}
+				if (MinaBoard[i][horizontal + i] == '0')
+				{
+					Field[i][horizontal + i] = ' ';
+				}
+			}
 			i--;
 		}
 		else if (MinaBoard[i][horizontal] >= 49 && MinaBoard[i][horizontal] <= 57)
@@ -309,9 +354,47 @@ void MakeVerticalSpace(short vertical, short horizontal, size_t size, char** Fie
 
 	for (int i = vertical; i < size; )
 	{
+		if(vertical - 1 >= 0)
+		{
+			if (MinaBoard[i][horizontal - 1] >= 49 && MinaBoard[i][horizontal - 1] <= 57)
+			{
+				Field[i][horizontal - 1] = MinaBoard[i][horizontal - 1];
+			}
+			
+		}
+		if (vertical + 1 < size)
+		{
+			if (MinaBoard[i][horizontal + 1] >= 49 && MinaBoard[i][horizontal + 1] <= 57)
+			{
+				Field[i][horizontal + 1] = MinaBoard[i][horizontal + 1];
+			}
+			
+		}
 		if (MinaBoard[i][horizontal] == '0')
 		{
 			Field[i][horizontal] = ' ';
+			if (vertical - i >= 0)
+			{
+				if (MinaBoard[i][horizontal - i] >= 49 && MinaBoard[i][horizontal - i] <= 57)
+				{
+					Field[i][horizontal - i] = MinaBoard[i][horizontal - i];
+				}
+				if (MinaBoard[i][horizontal - i] == '0')
+				{
+					Field[i][horizontal - i] = ' ';
+				}
+			}
+			if (vertical + i < size)
+			{
+				if (MinaBoard[i][horizontal + i] >= 49 && MinaBoard[i][horizontal + i] <= 57)
+				{
+					Field[i][horizontal + i] = MinaBoard[i][horizontal + i];
+				}
+				if (MinaBoard[i][horizontal + i] == '0')
+				{
+					Field[i][horizontal + i] = ' ';
+				}
+			}
 			i++;
 		}
 		else if (MinaBoard[i][horizontal] >= 49 && MinaBoard[i][horizontal] <= 57)
@@ -327,10 +410,48 @@ void MakeHorizontalSpace(short vertical, short horizontal, size_t size, char** F
 
 	for (int j = horizontal; j < size; )
 	{
+		if (vertical - 1 >= 0)
+		{
+			if (MinaBoard[vertical - 1][j] >= 49 && MinaBoard[vertical - 1][j] <= 57)
+			{
+				Field[vertical - 1][j] = MinaBoard[vertical - 1][j];
+			}
+			
+		}
+		if (vertical + 1 < size)
+		{
+			if (MinaBoard[vertical + 1][j] >= 49 && MinaBoard[vertical + 1][j] <= 57)
+			{
+				Field[vertical + 1][j] = MinaBoard[vertical + 1][j];
+			}
+			
+		}
 		if (MinaBoard[vertical][j] == '0')
 		{
 			Field[vertical][j] = ' ';
 
+			if (vertical - j >= 0)
+			{
+				if (MinaBoard[vertical - j][j] >= 49 && MinaBoard[vertical - j][j] <= 57)
+				{
+					Field[vertical - j][j] = MinaBoard[vertical - j][j];
+				}
+				if (MinaBoard[vertical - j][j] == '0')
+				{
+					Field[vertical - j][j] = ' ';
+				}
+			}
+			if (vertical + j < size)
+			{
+				if (MinaBoard[vertical + j][j] >= 49 && MinaBoard[vertical + j][j] <= 57)
+				{
+					Field[vertical + j][j] = MinaBoard[vertical + j][j];
+				}
+				if (MinaBoard[vertical + j][j] == '0')
+				{
+					Field[vertical + j][j] = ' ';
+				}
+			}
 			j++;
 		}
 		else if (MinaBoard[vertical][j] >= 49 && MinaBoard[vertical][j] <= 57)
@@ -344,9 +465,47 @@ void MakeHorizontalSpace(short vertical, short horizontal, size_t size, char** F
 
 	for (int j = horizontal; j >= 0; )
 	{
+		if (vertical - 1 >= 0)
+		{
+			if (MinaBoard[vertical - 1][j] >= 49 && MinaBoard[vertical - 1][j] <= 57)
+			{
+				Field[vertical - 1][j] = MinaBoard[vertical - 1][j];
+			}
+			
+		}
+		if (vertical + 1 < size)
+		{
+			if (MinaBoard[vertical + 1][j] >= 49 && MinaBoard[vertical + 1][j] <= 57)
+			{
+				Field[vertical + 1][j] = MinaBoard[vertical + 1][j];
+			}
+			
+		}
 		if (MinaBoard[vertical][j] == '0')
 		{
 			Field[vertical][j] = ' ';
+			if (vertical - j >= 0)
+			{
+				if (MinaBoard[vertical - j][j] >= 49 && MinaBoard[vertical - j][j] <= 57)
+				{
+					Field[vertical - j][j] = MinaBoard[vertical - j][j];
+				}
+				if (MinaBoard[vertical - j][j] == '0')
+				{
+					Field[vertical - j][j] = ' ';
+				}
+			}
+			if (vertical + j < size)
+			{
+				if (MinaBoard[vertical + j][j] >= 49 && MinaBoard[vertical + j][j] <= 57)
+				{
+					Field[vertical + j][j] = MinaBoard[vertical + j][j];
+				}
+				if (MinaBoard[vertical + j][j] == '0')
+				{
+					Field[vertical + j][j] = ' ';
+				}
+			}
 
 			j--;
 		}
@@ -361,7 +520,7 @@ void MakeDiaqonalSpace(short vertical_coor, short horizontal_coor, size_t size, 
 {
 	// Right diagonal
 
-	for (int i = vertical_coor - 1, j = horizontal_coor + 1; i >= 0 && j < size;)
+	for (int i = vertical_coor, j = horizontal_coor; i >= 0 && j < size;)
 	{
 		if (MinaBoard[i][j] == '0')
 		{
@@ -380,7 +539,7 @@ void MakeDiaqonalSpace(short vertical_coor, short horizontal_coor, size_t size, 
 
 	// Left diagonal
 
-	for (int i = vertical_coor + 1, j = horizontal_coor - 1; i < size && j >= 0;)
+	for (int i = vertical_coor, j = horizontal_coor; i < size && j >= 0;)
 	{
 		if (MinaBoard[i][j] == '0')
 		{
@@ -395,12 +554,49 @@ void MakeDiaqonalSpace(short vertical_coor, short horizontal_coor, size_t size, 
 			break;
 		}
 	}
+
+	for (int i = vertical_coor, j = horizontal_coor; i < size && j < size;)
+	{
+		if (MinaBoard[i][j] == '0')
+		{
+			Field[i][j] = ' ';
+			MakeVerticalSpace(i, j, size, Field, MinaBoard);
+			MakeHorizontalSpace(i, j, size, Field, MinaBoard);
+			i++;
+			j++;
+		}
+		else if (MinaBoard[i][j] >= 49 && MinaBoard[i][j] <= 57)
+		{
+			Field[i][j] = MinaBoard[i][j];
+			break;
+		}
+	}
+
+	for (int i = vertical_coor, j = horizontal_coor; i >= 0 && j >= 0;)
+	{
+		if (MinaBoard[i][j] == '0')
+		{
+			Field[i][j] = ' ';
+			MakeVerticalSpace(i, j, size, Field, MinaBoard);
+			MakeHorizontalSpace(i, j, size, Field, MinaBoard);
+			i--;
+			j--;
+		}
+		else if (MinaBoard[i][j] >= 49 && MinaBoard[i][j] <= 57)
+		{
+			Field[i][j] = MinaBoard[i][j];
+			break;
+		}
+	}
 }
 
 void MakeSpace(short vertical, short horizontal, size_t size, char** Field, char** MinaBoard)
 {
-	MakeVerticalSpace(vertical, horizontal, size, Field, MinaBoard);
-	MakeHorizontalSpace(vertical, horizontal, size, Field, MinaBoard);
+	//MakeVerticalSpace(vertical , horizontal, size, Field, MinaBoard);
+	//MakeHorizontalSpace(vertical , horizontal, size, Field, MinaBoard);
+
+
+	//MakeHorizontalSpace(vertical, horizontal, size, Field, MinaBoard);
 	MakeDiaqonalSpace(vertical, horizontal, size, Field, MinaBoard);
 }
 
@@ -430,7 +626,7 @@ bool IsWinner(size_t size, char** Field, char** MinaBoard)
 		}
 	}
 
-	
+
 	return win;
 }
 
@@ -496,6 +692,7 @@ bool Impact(short, short, size_t, char**, char**);
 void Deleting_GameOptions(size_t, char**, char**, bool**);
 
 
+
 //main
 
 #include "sapper.h"
@@ -526,8 +723,8 @@ int main()
 	bool flag;   // Повторение цикла при ошибках
 	short Game; // Повторение игрового цикла
 
-	size_t size = 10; // Размер поля
-	short mines = 2;  // Количество мин на игровом поле.
+	size_t size = 20; // Размер поля
+	short mines = 50;  // Количество мин на игровом поле.
 
 	short language = 1;  // Выбор языка
 	short op; // Опции
