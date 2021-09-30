@@ -234,26 +234,26 @@ void EpilepsyTime(const char* text) // Веселая загрузка игры
 {
 	std::cout << std::setw(105) << std::setfill(' ') << text;
 
-	Sleep(1000);
+	Sleep(750);
 
 	int disco_time = 0;
 	for (int i = 0; i < 50; i++)
 	{
 		if (disco_time == 2)
 		{
-			system("color 10"); 
+			system("color 10"); Sleep(120);
 		}
 		else if (disco_time == 4)
 		{
-			system("color 20"); 
+			system("color 20"); Sleep(120);
 		}
 		else if (disco_time == 6)
 		{
-			system("color 30");
+			system("color 30"); Sleep(120);
 		}
 		else if (disco_time == 8)
 		{
-			system("color 40"); 
+			system("color 40"); Sleep(120);
 		}
 		else if (disco_time == 10)
 		{
@@ -493,6 +493,39 @@ void Display_GameField(size_t size, char** Field) // Отображение иг
 
 }
 
+bool IsWinner(size_t size, char** Field, char** MinaBoard)
+{
+	bool win = true;
+	char** Copy_field = new char* [size]; 
+	Create_array(size, Copy_field);
+
+	for (int i = 0; i < size; i++)
+	{
+		for (int j = 0; j < size; j++)
+		{
+			Copy_field[i][j] = Field[i][j];
+			if (Copy_field[i][j] == (char)33)
+			{
+				Copy_field[i][j] == (char)2;
+			}
+		}
+	}
+	for (int i = 0; i < size; i++)
+	{
+		for (int j = 0; j < size; j++)
+		{
+			if (Field[i][j] != MinaBoard[i][j])
+			{
+				win = false;
+				break;
+			}
+		}
+	}
+
+
+	return win;
+}
+
 void MakeVerticalSpace(short vertical, short horizontal, size_t size, char** Field, char** MinaBoard)
 {
 	// Up
@@ -704,7 +737,6 @@ void MakeDiaqonalSpace(short vertical_coor, short horizontal_coor, size_t size, 
 		}
 	}
 }
-
 void MakeSpace(short vertical, short horizontal, size_t size, char** Field, char** MinaBoard)
 {
 	int iteration = 2;
@@ -864,36 +896,6 @@ void MakeSpace(short vertical, short horizontal, size_t size, char** Field, char
 	MakeDiaqonalSpace(vertical, horizontal, size, Field, MinaBoard);
 }
 
-bool IsWinner(size_t size, char** Field, char** MinaBoard)
-{
-	bool win = true;
-	for (int i = 0; i < size; i++)
-	{
-		for (int j = 0; j < size; j++)
-		{
-			if (Field[i][j] == ' ')
-			{
-				Field[i][j] == '0';
-			}
-		}
-	}
-
-	for (int i = 0; i < size; i++)
-	{
-		for (int j = 0; j < size; j++)
-		{
-			if (Field[i][j] != MinaBoard[i][j])
-			{
-				win = false;
-				break;
-			}
-		}
-	}
-
-
-	return win;
-}
-
 bool Impact(short vertical, short horizontal, size_t size, char** Field, char** MinaBoard) // Воздействие на конкретную координату
 {
 	if (MinaBoard[vertical][horizontal] == 2) return false; // Вы задели мину
@@ -910,6 +912,7 @@ bool Impact(short vertical, short horizontal, size_t size, char** Field, char** 
 
 	return true;
 }
+
 
 void Deleting_GameOptions(size_t size, char** Field, char** MinaBoard, bool** HiddenField)
 {
