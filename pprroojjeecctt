@@ -1,0 +1,1678 @@
+// main
+
+#include "sapper.h"
+#define DEBUG 1 // ADMIN MODE
+
+int main()
+{
+	CONSOLE_FONT_INFOEX cfi;
+	cfi.cbSize = sizeof(cfi);
+	cfi.nFont = 0;
+	cfi.dwFontSize.X = 0;                   // Width of each character in the font
+	cfi.dwFontSize.Y = 17;                  // Height
+	cfi.FontFamily = FF_DONTCARE;
+	cfi.FontWeight = FW_NORMAL;
+	//std::wcscpy(cfi.FaceName, L"Consolas"); // Choose your font
+	SetCurrentConsoleFontEx(GetStdHandle(STD_OUTPUT_HANDLE), FALSE, &cfi);
+
+	Black_Blue;
+	setlocale(LC_ALL, "Russian");
+	srand(time(nullptr));
+
+	bool flag;   // Повторение цикла при ошибках
+	short Game = 0; // Повторение игрового цикла
+
+	size_t size = 20; // Размер поля
+	short mines = 10;  // Количество мин на игровом поле.
+
+	short language = 1;  // Выбор языка
+	short op = 0; // Опции
+
+	EpilepsyTime("Minesweeper game is Loading.");
+
+	do
+	{
+		flag = true;
+		Game = true;
+
+		/*
+		// Создаем игровое поле по параметрам, выбранным пользователями
+		{
+			// Выбору языка
+			{
+
+				SEPARATOR_LINE;
+
+				EndLine; INDENT_(90); std::cout << " Select Language:"; EndLine; EndLine;
+
+				SEPARATOR_LINE;EndLine;
+
+				INDENT_space(75); std::cout << " 0. Russian"; EndLine; // Russian
+				INDENT_space(75); std::cout << " 1. English"; EndLine; // English
+
+				SEPARATOR_Input(82);
+				language = _getch(); EndLine;
+				language -= 48;
+
+				if (language != 0 && language != 1)
+				{
+					SEPARATOR_LINE;
+
+					INDENT_(90); std::cout << " Default Russian"; EndLine;
+
+					language = 0;
+				}
+			}
+
+			Clear_Field;
+			SEPARATOR_LINE;
+
+			// Выбор размера поля
+			{
+				do
+				{
+
+					if (!language)
+					{
+						EndLine; INDENT_space(65); std::cout << " Выберите размер игрового поля:"; EndLine; EndLine;
+					}
+					else
+					{
+						EndLine; INDENT_space(62); std::cout << " Select the size of the playing field:"; EndLine; EndLine;
+					}
+
+					SEPARATOR_LINE;
+
+					INDENT_space(74); std::cout << " 1. 10 x 10"; EndLine;// Ten
+					INDENT_space(74); std::cout << " 2. 15 x 15"; EndLine; // Fifteen
+					INDENT_space(74); std::cout << " 3. 20 x 20"; EndLine; // Fifteen
+
+					SEPARATOR_Input(82);
+					op = _getch(); EndLine;
+					op -= 48;
+
+					Clear_Field;
+					SEPARATOR_LINE;
+
+					switch (op)
+					{
+						case Ten:
+							{
+								size = 10;
+
+								// Выбор Игрового режима
+								{
+									do
+									{
+										if (!language)
+										{
+											EndLine; INDENT_(93); std::cout << " Выберите игровой режим:"; EndLine; EndLine;
+
+											SEPARATOR_LINE;
+
+											INDENT_space(70); std::cout << " 1. Легкий  (10 мин )"; EndLine; // Easy
+											INDENT_space(70); std::cout << " 2. Средний (20 мин )"; EndLine; // Medium
+											INDENT_space(70); std::cout << " 3. Сложный (30 мин )"; EndLine; // Hard
+										}
+										else
+										{
+											INDENT_(89); std::cout << " Select a Game Mode:"; EndLine;
+
+											SEPARATOR_LINE;
+
+											INDENT_space(70); std::cout << " 1. Easy   (10 mines)"; EndLine; // Easy
+											INDENT_space(70); std::cout << " 2. Medium (20 mines)"; EndLine; // Medium
+											INDENT_space(70); std::cout << " 3. Hard   (30 mines)"; EndLine; // Hard
+										}
+
+										SEPARATOR_Input(84);
+										op = _getch(); EndLine;
+										op -= 48;
+
+										Clear_Field;
+										SEPARATOR_LINE;
+
+										switch (op)
+										{
+											case Easy:
+												{
+													mines = 10;
+													flag = false;
+													break;
+												}
+											case Medium:
+												{
+													mines = 20;
+													flag = false;
+													break;
+												}
+											case Hard:
+												{
+													mines = 30;
+													flag = false;
+													break;
+												}
+											default:
+												{
+													INDENT_(105);
+													if (!language) std::cout << "[ERROR]Вы ввели что-то не так, попробуйте еще раз!";
+													else std::cout << "[ERROR]You entered something wrong, please try again!";
+
+													EndLine;
+
+													Wrong();
+
+													Clear_Field;
+													Black_Blue;
+													SEPARATOR_LINE;
+												}
+										}
+									} while (flag);
+
+									break;
+								}
+							}
+						case Fifteen:
+							{
+								size = 15;
+								// Выбор Игрового режима
+								{
+									do
+									{
+										if (!language)
+										{
+											EndLine; INDENT_(93); std::cout << " Выберите игровой режим:"; EndLine;  EndLine;
+
+											SEPARATOR_LINE;
+
+											INDENT_space(70); std::cout << " 1. Легкий  (20 мин )"; EndLine; // Easy
+											INDENT_space(70); std::cout << " 2. Средний (45 мин )"; EndLine; // Medium
+											INDENT_space(70); std::cout << " 3. Сложный (70 мин )"; EndLine; // Hard
+										}
+										else
+										{
+											EndLine; INDENT_(89); std::cout << " Select a Game Mode:"; EndLine; EndLine;
+
+											SEPARATOR_LINE;
+
+											INDENT_space(70); std::cout << " 1. Easy   (20 mines)"; EndLine; // Easy
+											INDENT_space(70); std::cout << " 2. Medium (45 mines)"; EndLine; // Medium
+											INDENT_space(70); std::cout << " 3. Hard   (70 mines)"; EndLine; // Hard
+										}
+
+										SEPARATOR_Input(82);
+										op = _getch(); EndLine;
+										op -= 48;
+
+										Clear_Field;
+										SEPARATOR_LINE;
+
+										switch (op)
+										{
+											case Easy:
+												{
+													mines = 20;
+													flag = false;
+													break;
+												}
+											case Medium:
+												{
+													mines = 45;
+													flag = false;
+													break;
+												}
+											case Hard:
+												{
+													mines = 70;
+													flag = false;
+													break;
+												}
+											default:
+												{
+
+													INDENT_(105);
+													if (!language) std::cout << "[ERROR]Вы ввели что-то не так, попробуйте еще раз!";
+													else std::cout << "[ERROR]You entered something wrong, please try again!";
+
+													EndLine;
+
+													Wrong();
+
+													Clear_Field;
+													Black_Blue;
+													SEPARATOR_LINE;
+												}
+										}
+									} while (flag);
+									break;
+								}
+							}
+						case Twenty:
+							{
+								size = 20;
+								// Выбор Игрового режима
+								{
+									do
+									{
+										if (!language)
+										{
+											EndLine; INDENT_(93); std::cout << " Выберите игровой режим:"; EndLine; EndLine;
+
+											SEPARATOR_LINE;
+
+											INDENT_space(70); std::cout << " 1. Легкий  (50 мин )"; EndLine; // Easy
+											INDENT_space(70); std::cout << " 2. Средний (100 мин )"; EndLine; // Medium
+											INDENT_space(70); std::cout << " 3. Сложный (200 мин )"; EndLine; // Hard
+										}
+										else
+										{
+											EndLine; INDENT_(89); std::cout << " Select a Game Mode:"; EndLine; EndLine;
+
+											SEPARATOR_LINE;
+
+											INDENT_space(69); std::cout << " 1. Easy   (50 mines)"; EndLine;// Easy
+											INDENT_space(69); std::cout << " 2. Medium (100 mines)"; EndLine; // Medium
+											INDENT_space(69); std::cout << " 3. Hard   (200 mines)"; EndLine; // Hard
+										}
+
+										SEPARATOR_Input(82);
+										op = _getch(); EndLine;
+										op -= 48;
+
+										Clear_Field;
+										SEPARATOR_LINE;
+
+										switch (op)
+										{
+											case Easy:
+												{
+													mines = 50;
+													flag = false;
+													break;
+												}
+											case Medium:
+												{
+													mines = 100;
+													flag = false;
+													break;
+												}
+											case Hard:
+												{
+													mines = 200;
+													flag = false;
+													break;
+												}
+											default:
+												{
+													INDENT_(105);
+													if (!language) std::cout << "[ERROR]Вы ввели что-то не так, попробуйте еще раз!";
+													else std::cout << "[ERROR]You entered something wrong, please try again!";
+
+													EndLine;
+
+													Wrong();
+
+													Clear_Field;
+													Black_Blue;
+													SEPARATOR_LINE;
+												}
+										}
+									} while (flag);
+									break;
+								}
+							}
+
+						default:
+							{
+								INDENT_(105);
+
+								if (!language) std::cout << "[ERROR]Вы ввели что-то не так, попробуйте еще раз!";
+								else std::cout << "[ERROR]You entered something wrong, please try again!";
+
+								EndLine;
+
+								Wrong();
+								Clear_Field;
+								Black_Blue;
+								SEPARATOR_LINE;
+							}
+					}
+				} while (flag);
+			}
+		}
+		 */
+		Clear_Field;
+		SEPARATOR_LINE;
+		size = 3;
+		Black_White;
+		// Заголовок игры по выбору языка
+		switch (language)
+		{
+			case Russian:
+				{
+					SEPARATOR_HASHTAG;
+					SEPARATOR_HASHTAG;EndLine;
+
+					INDENT_space(68); std::cout << (char)176; printf("\x1B[31mДобро пожаловать в игру \"Сапер\"\033[0m"); std::cout << (char)176;
+
+					EndLine;
+
+					INDENT_space(45); std::cout << " Ваша цель вскрыть пустые ячейки, не вскрыв при этом ни одной, содержащей мину."; EndLine;
+
+					EndLine;
+
+					INDENT_space(74); printf("\x1B[31mПравила игры :\033[0m"); EndLine;
+
+					EndLine;
+
+					INDENT_space(45); std::cout << " Выбрать определенную координату на поле. При выборе ячейки, она открывается. "; EndLine;
+					INDENT_space(58); std::cout << " Если в ней находится мина, то игрок проигрывает. "; EndLine; EndLine;
+					INDENT_space(17); std::cout << " Если в самой ячейке мины нет, но есть мины в соседних ячейках, то отображается число, соответствующее количеству мин в соседних ячейках."; EndLine;
+					INDENT_space(30); std::cout << " Несколько соседних ячеек с числами указывают на одни и те же мины, что позволяет точно определить опасные клетки. "; EndLine;
+					INDENT_space(35); std::cout << " Если ни в самой ячейке, ни в соседних с ней ячейках нет мин, то открываются все соседние пустые ячейки. "; EndLine;
+
+					EndLine;
+
+					INDENT_space(54); std::cout << " Для удобства, ячейки с минами можно помечать флажками."; EndLine;
+					INDENT_space(48); std::cout << " Игра выигрывается, как только открыты все ячейки, не содержащие мин."; EndLine;
+
+					EndLine;
+
+					INDENT_space(74); printf("\x1B[34mУдачной вам игры!\033[0m"); EndLine;
+
+					EndLine;
+					SEPARATOR_HASHTAG;
+					SEPARATOR_HASHTAG;
+
+					Sleep(3000);
+					EpilepsyTime("Запуск игры.");
+					break;
+				}
+
+			case English:
+				{
+					SEPARATOR_HASHTAG;
+					SEPARATOR_HASHTAG;
+					EndLine;
+
+					INDENT_space(68); std::cout << (char)176; printf("\x1B[31mWelcome to the game \"Minesweeper\"\033[0m"); std::cout << (char)176;
+
+					EndLine;
+
+					INDENT_space(50); std::cout << " Your goal is to open empty cells without opening any containing mines."; EndLine;
+
+					EndLine;
+
+					INDENT_space(72); 	printf("\x1B[31mRules of the game :\033[0m"); EndLine;
+
+					EndLine;
+
+					INDENT_space(45); std::cout << " Select a specific coordinate on the field. When you select a cell, it opens. "; EndLine;
+					INDENT_space(58); std::cout << " If there is a mine in it, the player loses. "; EndLine; EndLine;
+					INDENT_space(2);  std::cout << " If there is no mine in the cell itself, but there are mines in neighboring cells, then the number corresponding to the number of mines in neighboring cells is displayed."; EndLine;
+					INDENT_space(37); std::cout << " Several adjacent numbered slots represent the same mines, allowing you to pinpoint dangerous slots. "; EndLine;
+					INDENT_space(23); std::cout << " If there are no mines in either the cell itself or the cells adjacent to it, then all adjacent empty cells are opened. "; EndLine;
+
+					EndLine;
+
+					INDENT_space(49); std::cout << " For convenience, the slots of the shafts can be marked with flags."; EndLine;
+					INDENT_space(46); std::cout << " The game is won as soon as all cells that do not contain mines are open."; EndLine; EndLine;
+
+					INDENT_space(70); printf("\x1B[34mGood luck with your game!\033[0m"); EndLine;
+
+					EndLine;
+					SEPARATOR_HASHTAG;
+					SEPARATOR_HASHTAG;
+
+					Sleep(3000);
+					EpilepsyTime("Launching the game.");
+					break;
+				}
+		}
+
+		bool** HiddenField = new bool* [size]; // Поле, где отображаются мины
+		char** GameField = new char* [size];  // Игровые поля для геймера
+		char** MinaBoard = new char* [size]; // Поле, где ставятся мины и числа
+
+		Create_GameField(size, GameField, MinaBoard, HiddenField); // Создаем игровое поле
+
+		bool _continue = 1; // Чтобы продолжить игровой цикл
+		short horizontal_coordinat; // Горизонтальные координаты, например (1, 2, 3, 4...)
+		char  vertical_coordinat;  // Вертикальные координаты, например буквы ('A', 'B'...)
+		bool isCreated = 0; // Ставит мины после выдачи координат пользователя (помогает не проиграть с первого раза)
+
+
+		cfi.dwFontSize.Y = 21;  
+		cfi.FontFamily = FF_DONTCARE;
+		cfi.FontWeight = FW_NORMAL;
+		SetCurrentConsoleFontEx(GetStdHandle(STD_OUTPUT_HANDLE), FALSE, &cfi);
+		mines = 1;
+		// Игра
+		{
+			clock_t Begin = clock();
+			do
+			{
+				Sleep(250);
+
+				Black_Blue;
+
+				Display_GameField(size, GameField); // Отображение игрового поля
+				if (DEBUG) Display_GameField(size, MinaBoard); //  =>  чтобы увидеть поле с минами . Привилегия для админа
+
+				if (!IsWinner(size, GameField, MinaBoard))
+				{
+					if (!language)
+					{
+
+						SEPARATOR_LINE;	
+						INDENT_(78); std::cout << " Выберите :"; EndLine;
+						SEPARATOR_LINE;
+
+						INDENT_space(65); std::cout << " 0. Выбрать ячейку"; EndLine; // Select_cell
+						INDENT_space(65); std::cout << " 1. Поставить флаг"; EndLine; // Put_flag
+						INDENT_space(65); std::cout << " 2. Снять флаг "; EndLine; // Remove_flag
+									 
+					}
+					else
+					{
+						SEPARATOR_LINE;
+						INDENT_(78); std::cout << " Select :"; EndLine;
+						SEPARATOR_LINE;
+
+						INDENT_space(65); std::cout << " 0. Select cell"; EndLine; // Select_cell
+						INDENT_space(65); std::cout << " 1. Put a flag"; EndLine; // Put_flag
+						INDENT_space(65); std::cout << " 2. Remove a flag"; EndLine; // Remove_flag
+					}
+
+					SEPARATOR_Input(74);
+
+					op = _getch(); EndLine;
+					op -= 48;
+
+					if (op != 0 && op != 1 && op != 2)
+					{
+						op = 0;
+						SEPARATOR_LINE;
+						INDENT_(80); std::cout << " Default 0"; EndLine;
+					}
+
+					Clear_Field;
+					Black_Blue;
+					Display_GameField(size, GameField); // Отображение игрового поля
+
+					flag = true;
+					do
+					{
+						printf("\x1B[31m\033[0");
+						SEPARATOR_LINE;
+
+						EndLine;
+
+						INDENT_space(67);
+						if (!language) printf("\x1B[31mПожалуйста стреляйте\033[0");
+						else  printf("\x1B[31mPlease shoot!\033[0");
+
+						EndLine;
+						SEPARATOR_LINE;
+						EndLine;
+
+						INDENT_space(50);
+						if (!language) printf("\x1B[31mВведите вертикальную координату (например, A) => \033[0");
+						else  printf("\x1B[31mEnter the vertical coordinate (e.g. A) => \033[0");
+						vertical_coordinat = _getch();
+						std::cout << vertical_coordinat;
+						
+						EndLine;
+						EndLine;
+
+						INDENT_space(50);
+						if (!language) printf("\x1B[31mВведите горизонтальную координату (например, A) => \033[0");
+						else  printf("\x1B[31mEnter the horizontal coordinate (e.g. A) => \033[0");
+						std::cin >> horizontal_coordinat;
+
+						while (std::cin.fail())
+						{
+							EndLine;
+							EndLine;
+
+							INDENT_(95);
+							INDENT_(95);
+							if (!language) std::cout << "[ERROR]Вы ввели что-то не так, попробуйте еще раз!";
+							else std::cout << "[ERROR]You entered something wrong, please try again!";						
+							std::cin.clear(); // сбрасывает все биты потока, тоесть поток становится "хорошим"
+							std::cin.ignore(std::cin.rdbuf()->in_avail());//защита от дурака при вводе букв вместо числа
+							std::cin.sync();
+							Sleep(1000);
+						}
+						
+
+						// Проверка координатов
+						if (!Check_coordinats(size, vertical_coordinat, horizontal_coordinat))
+						{
+							flag = false;
+							Clear_Field;
+
+							SEPARATOR_LINE;
+
+							INDENT_(95);
+
+							if (!language) std::cout << "[ERROR]Вы ввели что-то не так, попробуйте еще раз!";
+							else std::cout << "[ERROR]You entered something wrong, please try again!";
+
+							Wrong();
+
+							Clear_Field;
+
+							Black_Blue;
+
+							Display_GameField(size, GameField); // Отображение игрового поля
+
+							SEPARATOR_LINE;
+						}
+						else
+						{
+							flag = true;
+						}
+
+					} while (!flag);
+
+					if (!isCreated)
+					{
+						SetMina(mines, size, MinaBoard, HiddenField, vertical_coordinat - 65, horizontal_coordinat);
+						isCreated = true;
+					}
+
+					switch (op)
+					{
+						case Select_cell:
+							{
+								if (GameField[vertical_coordinat - 65][horizontal_coordinat] == (char)2)
+								{
+									_continue = Impact(vertical_coordinat - 65, horizontal_coordinat, size, GameField, MinaBoard);
+								}
+								else
+								{
+									Clear_Field;
+									SEPARATOR_LINE;
+
+									INDENT_(95);
+									if (!language) std::cout << "[ERROR]Повтор ячейки, выберите другой !";
+									else std::cout << "[ERROR]Cell repeat, choose another!";
+
+									EndLine;
+									Wrong();
+									SEPARATOR_LINE;
+								}
+
+								break;
+							}
+
+						case Put_flag:
+							{
+								if (GameField[vertical_coordinat - 65][horizontal_coordinat] == (char)2)
+								{
+									GameField[vertical_coordinat - 65][horizontal_coordinat] = (char)33;
+								}
+
+								else
+								{
+									Clear_Field;
+									SEPARATOR_LINE;
+
+									INDENT_(95);
+									if (!language) std::cout << "[ERROR]Повтор ячейки, выберите другой !";
+									else std::cout << "[ERROR]Cell repeat, choose another!";
+
+									EndLine;
+									Wrong();
+									SEPARATOR_LINE;
+								}
+								break;
+							}
+						case Remove_flag:
+							{
+								if (GameField[vertical_coordinat - 65][horizontal_coordinat] == (char)33)
+								{
+									GameField[vertical_coordinat - 65][horizontal_coordinat] = (char)2;
+								}
+								else
+								{
+									Clear_Field;
+									SEPARATOR_LINE;
+
+									INDENT_(95);
+									if (!language) std::cout << "[ERROR]В ячейке уже нет флажка, выбирайте другой!";
+									else std::cout << "[ERROR]The checkbox is no longer in the cell, choose another!";
+									EndLine;
+									Wrong();
+
+									Black_Blue;
+								}
+								break;
+							}
+					}
+					Clear_Field;
+				}
+				else
+				{
+					Clear_Field;
+
+					clock_t End = clock();
+
+					SEPARATOR_LINE;
+
+					Display_GameField(size, MinaBoard); // Отображение игрового поля
+					SEPARATOR_LINE;
+					int minutes = ((End - Begin) / CLOCKS_PER_SEC) / 60;
+					int seconds = ((double)(End - Begin) / CLOCKS_PER_SEC) - minutes*60;
+					
+					SEPARATOR_LINE;
+					INDENT_(75);
+					if (!language) std::cout << "Ваше время =>  ";
+					else std::cout << "Time =>  ";
+					std::cout << minutes << "m " << seconds << " s";
+
+					EndLine;
+					SEPARATOR_LINE;
+
+					INDENT_(75);
+					if (!language) std::cout << "Вы выиграли! ";
+					else std::cout << "You win!";
+
+					EndLine;
+					_continue = false;
+				}
+
+			} while (_continue);
+
+			if (!IsWinner(size, GameField, MinaBoard))
+			{
+				SEPARATOR_LINE;
+
+				Display_GameField(size, MinaBoard); // Отображение игрового поля
+
+				INDENT_(75);
+				if (!language) std::cout << "Вы проиграли!";
+				else std::cout << "You lose!";
+
+				EndLine;
+				Wrong();
+				Black_Blue;
+			}
+		}
+
+		Sleep(5500);
+		Black_Blue;
+
+		cfi.dwFontSize.Y = 17;                  // Height
+		cfi.FontFamily = FF_DONTCARE;
+		cfi.FontWeight = FW_NORMAL;
+		SetCurrentConsoleFontEx(GetStdHandle(STD_OUTPUT_HANDLE), FALSE, &cfi);
+		// Запрос на повторение игры
+		{
+			Clear_Field;
+			if (!language)
+			{
+				SEPARATOR_LINE;
+				EndLine; INDENT_(100); std::cout << "Вы хотите начать новую игру?"; EndLine; EndLine;
+				SEPARATOR_LINE;
+
+				INDENT_space(80); std::cout << " 0. Нет"; EndLine; // No
+				INDENT_space(80); std::cout << " 1. Да"; EndLine; // Yes
+
+				SEPARATOR_Input(84);
+				Game = _getch(); EndLine;
+				Game -= 48;
+
+				SEPARATOR_LINE;
+
+				if (Game != 0 && Game != 1)
+				{
+					INDENT_(92); std::cout << " По умолчанию Нет!"; EndLine;
+					SEPARATOR_LINE;
+
+					Game = 0;
+				}
+
+				if (!Game)
+				{
+					INDENT_(90); std::cout << " До свидания!"; EndLine;
+					SEPARATOR_LINE;
+				}
+				else
+				{
+					Clear_Field;
+					EpilepsyTime("Игра «Сапер» загружается.");
+				}
+			}
+			else
+			{
+				SEPARATOR_LINE;
+				EndLine; INDENT_(100); std::cout << " Do you want to start a new game?"; EndLine;  EndLine;
+				SEPARATOR_LINE;
+
+				INDENT_space(80); std::cout << " 0. No"; EndLine; // No
+				INDENT_space(80); std::cout << " 1. Yes"; EndLine; // Yes
+
+				SEPARATOR_Input(85);
+				Game = _getch(); EndLine;
+				Game -= 48;
+
+				SEPARATOR_LINE;
+
+				if (Game != 0 && Game != 1)
+				{
+					INDENT_(89); std::cout << " Default No!"; EndLine;
+					SEPARATOR_LINE;
+
+					Game = 0;
+				}
+
+				if (!Game)
+				{
+					INDENT_(88); std::cout << " Goodbye!"; EndLine;
+					SEPARATOR_LINE;
+				}
+				else
+				{
+					EpilepsyTime("Minesweeper game is Loading.");
+				}
+			}
+		}
+
+		Deleting_GameOptions(size, GameField, MinaBoard, HiddenField); // Удаление параметров игры
+
+	} while (Game);
+}
+
+// .h
+
+#pragma once
+
+#include <Windows.h>
+#include <iostream>
+#include <iomanip>
+#include <string>
+#include <cwchar>
+#include <cstdio>
+#include <conio.h>
+#include <ios>
+#include <ctime>
+
+
+#define _CRT_SECURE_NO_WARNINGS
+#define SEPARATOR_HASHTAG 	std::cout << std::setw(172) << std::setfill('#') << '#' << std::endl;
+#define SEPARATOR_LINE 	std::cout << std::setw(174) << std::setfill('_') << " \n\n";
+
+#define SEPARATOR_Input(s) 	std::cout << std::setw(s) << std::setfill(' ') << " => ";
+#define INDENT_space(s) 	std::cout << std::setw(s) << std::setfill(' ') << ' ';
+#define INDENT_(s) 	std::cout << std::setw(s) << std::setfill(' ');
+
+#define Clear_Field  system("cls");
+#define EndLine  std::cout << std::endl;
+#define Sound 	std::cout << "\a";
+
+#define Blue_Black  system("color 10");
+#define Green_Black  system("color 20");
+#define Aqua_Black  system("color 30");
+#define Red_Black  system("color 40");
+#define Purple_Black  system("color 50");
+#define Black_Blue  system("color 0b");
+#define Black_White  system("color 0F");
+
+#define FILENAME "Gamers.txt"
+
+
+enum SelectLanguage
+{
+	Russian = 0,
+	English,
+};
+
+enum SelectMode
+{
+	Easy = 1,
+	Medium,
+	Hard,
+};
+
+enum SelectSize
+{
+	Ten = 1,
+	Fifteen,
+	Twenty,
+};
+
+enum Select_cell
+{
+	Select_cell = 0,
+	Put_flag,
+	Remove_flag,
+};
+
+typedef FILE* stream;
+
+struct user
+{
+	char* name;
+	uint32_t points;
+};
+
+char* serialize_user(user& p);
+
+user* create_user(const char* name, uint32_t age);
+
+void print_user(user& p);
+
+void delete_user(user* p);
+
+bool write_person(user& p);
+
+bool search_person(char*);
+
+void append(user**& arr, size_t& len, user* value);
+
+char* normalize_string(char* s);
+
+user** read_persons(bool* success, size_t& len);
+
+
+template<typename T>
+auto Create_array(size_t, T**);
+
+template<typename T>
+auto Delete_array(size_t, T**);
+
+void EpilepsyTime(const char*);  // Веселая загрузка игры 
+
+void Wrong();  // Когда пользователь допустил ошибку при наборе текста
+
+void Create_GameField(size_t, char**, char**, bool**); // Создание игрового поля. Заполнение определенными символами
+
+void SetMina(int mina, size_t, char**, bool**, short, short); // Рандомизируем мины вокруг поля
+
+bool Check_coordinats(size_t, char&, short); // Проверка координатов
+
+void Display_GameField(size_t, char**); // Отображение игрового поля или же поля с минами для админа
+
+void MakeVerticalSpace(short, short, size_t size, char**, char**);
+void MakeHorizontalSpace(short, short, size_t size, char**, char**);
+void MakeDiaqonalSpace(short, short, size_t size, char**, char**);
+
+void MakeSpace(short, short, size_t size, char**, char**);
+bool IsWinner(size_t, char**, char**);
+bool Impact(short, short, size_t, char**, char**);
+
+void Deleting_GameOptions(size_t, char**, char**, bool**);
+
+
+
+
+// cpp
+
+#include "sapper.h"
+
+template<typename T>
+auto Create_array(size_t size, T** arr)
+{
+	for (size_t i = 0; i < size; i++)
+	{
+		arr[i] = new T[size];
+	}
+}
+
+template<typename T>
+auto Delete_array(size_t size, T** arr)
+{
+	for (size_t i = 0; i < size; i++)
+	{
+		delete[] arr[i];
+	}
+
+	delete[] arr;
+}
+
+
+void EpilepsyTime(const char* text) // Веселая загрузка игры 
+{
+	SEPARATOR_LINE;
+	EndLine;
+	SEPARATOR_HASHTAG;
+	SEPARATOR_HASHTAG;
+	EndLine;
+
+	INDENT_space(75);
+	std::cout << "FLASHLIGHTS WARNING"; EndLine;
+
+	EndLine;
+	SEPARATOR_HASHTAG;
+	SEPARATOR_HASHTAG;
+	SEPARATOR_LINE;
+
+	Sleep(1500);
+	Clear_Field;
+	SEPARATOR_HASHTAG;
+	SEPARATOR_HASHTAG;
+	EndLine;
+	INDENT_space(82 - strlen(text) / 2);
+	std::cout << text;
+
+	Sleep(750);
+	int disco_time = 0;
+	for (int i = 0; i < 26; i++)
+	{
+		if (disco_time == 2)
+		{
+			Blue_Black; Sleep(80);
+		}
+		else if (disco_time == 4)
+		{
+			Green_Black; Sleep(80);
+		}
+		else if (disco_time == 6)
+		{
+			Aqua_Black; Sleep(80);
+		}
+		else if (disco_time == 8)
+		{
+			Red_Black; Sleep(80);
+		}
+		else if (disco_time == 10)
+		{
+			Purple_Black;
+			std::cout << '.';
+			disco_time = 0;
+		}
+		disco_time++;
+	}
+
+	Sound; EndLine;
+	Black_Blue;
+	Sleep(500);
+	Clear_Field;
+}
+
+void Wrong()
+{
+	for (int i = 0; i < 6; i++)
+	{
+		if (i % 2 == 0)
+		{
+			Red_Black; Sleep(150);
+		}
+		else
+		{
+			Black_Blue; Sleep(150);
+		}
+	}
+}
+
+void Create_GameField(size_t size, char** Field, char** MinaBoard, bool** HiddenField) // Создание игрового поля. Заполнение определенными символами
+{
+	Create_array(size, Field);
+	Create_array(size, MinaBoard);
+	Create_array(size, HiddenField);
+
+	char symbol = 2;
+
+	for (int i = 0; i < size; i++)
+	{
+		for (int j = 0; j < size; j++)
+		{
+			Field[i][j] = symbol;
+			MinaBoard[i][j] = ' ';
+			HiddenField[i][j] = 0;
+		}
+	}
+}
+
+void SetMina(int mina, size_t size, char** MinaBoard, bool** HiddenField, short vertical, short horizontal) // Рандомизируем мины вокруг поля
+{
+	HiddenField[vertical][horizontal] = 1;
+	for (int i = 0; i < mina;)
+	{
+		int x = rand() % size; // случайные числа из диапазона 0 <-> size
+		int y = rand() % size; // случайные числа из диапазона 0 <-> size
+
+		if (!HiddenField[x][y])
+		{
+			HiddenField[x][y] = 1;
+			i++;
+		}
+	}
+
+	HiddenField[vertical][horizontal] = 0;
+
+	for (int i = 0; i < size; i++)
+	{
+		for (int j = 0; j < size; j++)
+		{
+			if (HiddenField[i][j] == 1)
+			{
+				MinaBoard[i][j] = 2;// Добавляет мину смайлик
+			}
+		}
+	}
+
+	vertical = 0;
+	horizontal = 0;
+
+	int count = 0;
+	bool flag = true;
+	// Добавляет количество мин в окружении одной клетки
+	{
+		do
+		{
+			count = 0;
+			if (!HiddenField[vertical][horizontal])
+			{
+				if (vertical == 0)
+				{
+					if (horizontal == 0)
+					{
+						count = HiddenField[vertical + 1][horizontal] + HiddenField[vertical][horizontal + 1] + HiddenField[vertical + 1][horizontal + 1];
+					}
+					else if (horizontal > 0 && horizontal < size - 1)
+					{
+						count = HiddenField[vertical][horizontal - 1] + HiddenField[vertical + 1][horizontal - 1] + HiddenField[vertical + 1][horizontal] + HiddenField[vertical][horizontal + 1] + HiddenField[vertical + 1][horizontal + 1];
+					}
+					else
+					{
+						count = HiddenField[vertical][horizontal - 1] + HiddenField[vertical + 1][horizontal - 1] + HiddenField[vertical + 1][horizontal];
+					}
+				}
+				else if (vertical > 0 && vertical < size - 1)
+				{
+					if (horizontal == 0)
+					{
+						count = HiddenField[vertical - 1][horizontal] + HiddenField[vertical + 1][horizontal] + HiddenField[vertical - 1][horizontal + 1] + HiddenField[vertical][horizontal + 1] + HiddenField[vertical + 1][horizontal + 1];
+
+					}
+					else if (horizontal > 0 && horizontal < size - 1)
+
+					{
+						count = HiddenField[vertical - 1][horizontal - 1] + HiddenField[vertical - 1][horizontal] + HiddenField[vertical - 1][horizontal + 1] + HiddenField[vertical][horizontal - 1] + HiddenField[vertical][horizontal + 1] + HiddenField[vertical + 1][horizontal - 1] + HiddenField[vertical + 1][horizontal] + HiddenField[vertical + 1][horizontal + 1];
+					}
+					else
+					{
+						count = HiddenField[vertical - 1][horizontal - 1] + HiddenField[vertical - 1][horizontal] + HiddenField[vertical][horizontal - 1] + HiddenField[vertical + 1][horizontal - 1] + HiddenField[vertical + 1][horizontal];
+					}
+				}
+				else
+				{
+					if (horizontal == 0)
+					{
+						count = HiddenField[vertical - 1][horizontal] + HiddenField[vertical - 1][horizontal + 1] + HiddenField[vertical][horizontal + 1];
+					}
+					else if (horizontal > 0 && horizontal < size - 1)
+					{
+						count = HiddenField[vertical - 1][horizontal - 1] + HiddenField[vertical - 1][horizontal] + HiddenField[vertical - 1][horizontal + 1] + HiddenField[vertical][horizontal - 1] + HiddenField[vertical][horizontal + 1];
+					}
+					else
+					{
+						count = HiddenField[vertical - 1][horizontal - 1] + HiddenField[vertical][horizontal - 1] + HiddenField[vertical - 1][horizontal];
+					}
+				}
+
+				MinaBoard[vertical][horizontal] = char(count + 48);
+			}
+
+			horizontal++;
+
+			if (horizontal == size && vertical + 1 == size)
+			{
+				flag = false;
+			}
+
+			if (horizontal == size)
+			{
+				horizontal = 0;
+				vertical++;
+			}
+		} while (flag);
+	}
+
+	for (int i = 0; i < size; i++)
+	{
+		for (int j = 0; j < size; j++)
+		{
+			if (MinaBoard[i][j] == '0')
+			{
+				MinaBoard[i][j] = ' ';
+			}
+		}
+	}
+}
+
+bool Check_coordinats(size_t size, char& vertical, short horizontal) // Проверка координатов
+{
+	if (char(vertical - 32) >= 65 && char(vertical - 32) < (65 + size))
+	{
+		vertical -= 32;
+	}
+
+	if (!(vertical >= 65 && vertical < (65 + size)))
+	{
+		return false;
+	}
+
+	if (!(horizontal >= 0 && horizontal < size))
+	{
+		return false;
+	}
+
+	return true;
+}
+
+void Display_GameField(size_t size, char** Field) // Отображение игрового поля
+{
+
+	char vertical_coordinates = 65; // Чтобы добавить вертикальные координаты, например буква ('A', 'B'...)
+	SEPARATOR_LINE;
+
+	if (size == 10)
+	{
+		INDENT_(60 - size / 2);
+	}
+	else if (size == 15)
+	{
+		INDENT_(55 - size / 2);
+	}
+	else
+	{
+		INDENT_(50 - size / 2);
+	}
+
+	for (int i = 0; i < size;) // Чтобы добавить горизонтальные координаты, например (1, 2, 3, 4...)
+	{
+		if (i > 8)
+		{
+			std::cout << i++ << "  ";
+		}
+		else
+		{
+			std::cout << i++ << "   ";
+		}
+	}
+
+	EndLine; SEPARATOR_LINE;
+
+	for (int i = 0; i < size; i++)
+	{
+		if (size == 10)
+		{
+			INDENT_(55 - size / 2);
+			std::cout << (char)(vertical_coordinates + i) << " |  ";
+		}
+		else if (size == 15)
+		{
+			INDENT_(50 - size / 2);
+			std::cout << (char)(vertical_coordinates + i) << " |  ";
+		}
+		else
+		{
+			INDENT_(45 - size / 2);
+			std::cout << (char)(vertical_coordinates + i) << " |  ";
+		}
+
+		for (int j = 0; j < size; j++)
+		{
+			if (j + 1 == size)
+			{
+				std::cout << Field[i][j] << "  | " << (char)(vertical_coordinates + i);
+			}
+			else
+			{
+				std::cout << Field[i][j] << "   ";
+			}
+		}
+		EndLine;
+	}
+	SEPARATOR_LINE;
+
+	if (size == 10)
+	{
+		INDENT_(60 - size / 2);
+	}
+	else if (size == 15)
+	{
+		INDENT_(55 - size / 2);
+	}
+	else
+	{
+		INDENT_(50 - size / 2);
+	}
+
+	for (int i = 0; i < size;) // Чтобы добавить горизонтальные координаты, например (1, 2, 3, 4...)
+	{
+		if (i > 8)
+		{
+			std::cout << i++ << "  ";
+		}
+		else
+		{
+			std::cout << i++ << "   ";
+		}
+	}
+
+	EndLine;
+}
+
+bool IsWinner(size_t size, char** Field, char** MinaBoard)
+{
+	bool win = true;
+
+	for (int i = 0; i < size; i++)
+	{
+		for (int j = 0; j < size; j++)
+		{
+			if (Field[i][j] != MinaBoard[i][j])
+			{
+				if (!(Field[i][j] == 33 && MinaBoard[i][j]== 2))
+				{
+					win = false;
+					break;
+				}
+			}
+		}
+	}
+
+	return win;
+}
+
+void MakeVerticalSpace(short vertical, short horizontal, size_t size, char** Field, char** MinaBoard)
+{
+	// Up
+
+	for (int i = vertical; i >= 0; )
+	{
+		if (MinaBoard[i][horizontal] == ' ')
+		{
+			Field[i][horizontal] = ' ';
+			if (vertical - 1 >= 0)
+			{
+				if (MinaBoard[i][horizontal - 1] >= 49 && MinaBoard[i][horizontal - 1] <= 57)
+				{
+					Field[i][horizontal - 1] = MinaBoard[i][horizontal - 1];
+				}
+
+			}
+			if (vertical + 1 < size)
+			{
+				if (MinaBoard[i][horizontal + 1] >= 49 && MinaBoard[i][horizontal + 1] <= 57)
+				{
+					Field[i][horizontal + 1] = MinaBoard[i][horizontal + 1];
+				}
+			}
+			i--;
+		}
+		else if (MinaBoard[i][horizontal] >= 49 && MinaBoard[i][horizontal] <= 57)
+		{
+			Field[i][horizontal] = MinaBoard[i][horizontal];
+			break;
+		}
+
+	}
+
+	// Down
+
+	for (int i = vertical; i < size; )
+	{
+		if (MinaBoard[i][horizontal] == ' ')
+		{
+			Field[i][horizontal] = ' ';
+			if (vertical - 1 >= 0)
+			{
+				if (MinaBoard[i][horizontal - 1] >= 49 && MinaBoard[i][horizontal - 1] <= 57)
+				{
+					Field[i][horizontal - 1] = MinaBoard[i][horizontal - 1];
+				}
+
+			}
+			if (vertical + 1 < size)
+			{
+				if (MinaBoard[i][horizontal + 1] >= 49 && MinaBoard[i][horizontal + 1] <= 57)
+				{
+					Field[i][horizontal + 1] = MinaBoard[i][horizontal + 1];
+				}
+
+			}
+			i++;
+		}
+		else if (MinaBoard[i][horizontal] >= 49 && MinaBoard[i][horizontal] <= 57)
+		{
+			Field[i][horizontal] = MinaBoard[i][horizontal];
+			break;
+		}
+
+
+	}
+}
+void MakeHorizontalSpace(short vertical, short horizontal, size_t size, char** Field, char** MinaBoard)
+{
+	// Right
+
+	for (int j = horizontal; j < size; )
+	{
+
+		if (MinaBoard[vertical][j] == ' ')
+		{
+			Field[vertical][j] = ' ';
+
+			if (vertical - 1 >= 0)
+			{
+				if (MinaBoard[vertical - 1][j] >= 49 && MinaBoard[vertical - 1][j] <= 57)
+				{
+					Field[vertical - 1][j] = MinaBoard[vertical - 1][j];
+				}
+			}
+			if (vertical + 1 < size)
+			{
+				if (MinaBoard[vertical + 1][j] >= 49 && MinaBoard[vertical + 1][j] <= 57)
+				{
+					Field[vertical + 1][j] = MinaBoard[vertical + 1][j];
+				}
+			}
+			j++;
+		}
+		else if (MinaBoard[vertical][j] >= 49 && MinaBoard[vertical][j] <= 57)
+		{
+			Field[vertical][j] = MinaBoard[vertical][j];
+			break;
+		}
+
+
+	}
+
+	// Left
+
+	for (int j = horizontal; j >= 0; )
+	{
+
+		if (MinaBoard[vertical][j] == ' ')
+		{
+			Field[vertical][j] = ' ';
+			if (vertical - 1 >= 0)
+			{
+				if (MinaBoard[vertical - 1][j] >= 49 && MinaBoard[vertical - 1][j] <= 57)
+				{
+					Field[vertical - 1][j] = MinaBoard[vertical - 1][j];
+				}
+
+			}
+			if (vertical + 1 < size)
+			{
+				if (MinaBoard[vertical + 1][j] >= 49 && MinaBoard[vertical + 1][j] <= 57)
+				{
+					Field[vertical + 1][j] = MinaBoard[vertical + 1][j];
+				}
+			}
+
+			j--;
+		}
+		else if (MinaBoard[vertical][j] >= 49 && MinaBoard[vertical][j] <= 57)
+		{
+			Field[vertical][j] = MinaBoard[vertical][j];
+			break;
+		}
+
+	}
+}
+void MakeDiaqonalSpace(short vertical_coor, short horizontal_coor, size_t size, char** Field, char** MinaBoard)
+{
+	// Right diagonal
+
+	for (int i = vertical_coor, j = horizontal_coor; i >= 0 && j < size;)
+	{
+		if (MinaBoard[i][j] == ' ')
+		{
+			Field[i][j] = ' ';
+			MakeVerticalSpace(i, j, size, Field, MinaBoard);
+			MakeHorizontalSpace(i, j, size, Field, MinaBoard);
+			i--;
+			j++;
+		}
+		else if (MinaBoard[i][j] >= 49 && MinaBoard[i][j] <= 57)
+		{
+			Field[i][j] = MinaBoard[i][j];
+			break;
+		}
+	}
+
+	// Left diagonal
+
+	for (int i = vertical_coor, j = horizontal_coor; i < size && j >= 0;)
+	{
+		if (MinaBoard[i][j] == ' ')
+		{
+			Field[i][j] = ' ';
+			MakeVerticalSpace(i, j, size, Field, MinaBoard);
+			MakeHorizontalSpace(i, j, size, Field, MinaBoard);
+			i++; j--;
+		}
+		else if (MinaBoard[i][j] >= 49 && MinaBoard[i][j] <= 57)
+		{
+			Field[i][j] = MinaBoard[i][j];
+			break;
+		}
+	}
+
+	for (int i = vertical_coor, j = horizontal_coor; i < size && j < size;)
+	{
+		if (MinaBoard[i][j] == ' ')
+		{
+			Field[i][j] = ' ';
+			MakeVerticalSpace(i, j, size, Field, MinaBoard);
+			MakeHorizontalSpace(i, j, size, Field, MinaBoard);
+			i++;
+			j++;
+		}
+		else if (MinaBoard[i][j] >= 49 && MinaBoard[i][j] <= 57)
+		{
+			Field[i][j] = MinaBoard[i][j];
+			break;
+		}
+	}
+
+	for (int i = vertical_coor, j = horizontal_coor; i >= 0 && j >= 0;)
+	{
+		if (MinaBoard[i][j] == ' ')
+		{
+			Field[i][j] = ' ';
+			MakeVerticalSpace(i, j, size, Field, MinaBoard);
+			MakeHorizontalSpace(i, j, size, Field, MinaBoard);
+			i--;
+			j--;
+		}
+		else if (MinaBoard[i][j] >= 49 && MinaBoard[i][j] <= 57)
+		{
+			Field[i][j] = MinaBoard[i][j];
+			break;
+		}
+	}
+}
+void MakeSpace(short vertical, short horizontal, size_t size, char** Field, char** MinaBoard)
+{
+	int iteration = 2;
+	while (iteration--)
+	{
+		MakeDiaqonalSpace(vertical, horizontal, size, Field, MinaBoard);
+
+		for (int i = vertical; i < size; i++)
+		{
+			if (MinaBoard[i][horizontal] == ' ')
+			{
+				for (int j = horizontal; j < size; j++)
+				{
+					if (MinaBoard[i][j] == ' ')
+					{
+						Field[i][j] = ' ';
+					}
+					else if (MinaBoard[i][j] >= 49 && MinaBoard[i][j] <= 57)
+					{
+						Field[i][j] = MinaBoard[i][j];
+						break;
+					}
+				}
+
+				for (int j = horizontal; j >= 0; j--)
+				{
+					if (MinaBoard[i][j] == ' ')
+					{
+						Field[i][j] = ' ';
+					}
+					else if (MinaBoard[i][j] >= 49 && MinaBoard[i][j] <= 57)
+					{
+						Field[i][j] = MinaBoard[i][j];
+						break;
+					}
+				}
+			}
+			else if (MinaBoard[i][horizontal] >= 49 && MinaBoard[i][horizontal] <= 57)
+			{
+				Field[i][horizontal] = MinaBoard[i][horizontal];
+				break;
+			}
+		}
+
+		for (int i = vertical; i >= 0; i--)
+		{
+			if (MinaBoard[i][horizontal] == ' ')
+			{
+				for (int j = horizontal; j < size; j++)
+				{
+					if (MinaBoard[i][j] == ' ')
+					{
+						Field[i][j] = ' ';
+					}
+					else if (MinaBoard[i][j] >= 49 && MinaBoard[i][j] <= 57)
+					{
+						Field[i][j] = MinaBoard[i][j];
+						break;
+					}
+				}
+
+				for (int j = horizontal; j >= 0; j--)
+				{
+					if (MinaBoard[i][j] == ' ')
+					{
+						Field[i][j] = ' ';
+					}
+					else if (MinaBoard[i][j] >= 49 && MinaBoard[i][j] <= 57)
+					{
+						Field[i][j] = MinaBoard[i][j];
+						break;
+					}
+				}
+			}
+			else if (MinaBoard[i][horizontal] >= 49 && MinaBoard[i][horizontal] <= 57)
+			{
+				Field[i][horizontal] = MinaBoard[i][horizontal];
+				break;
+			}
+		}
+
+		for (int j = horizontal; j < size; j++)
+		{
+			if (MinaBoard[vertical][j] == ' ')
+			{
+				for (int i = vertical; i < size; i++)
+				{
+					if (MinaBoard[i][j] == ' ')
+					{
+						Field[i][j] = ' ';
+					}
+					else if (MinaBoard[i][j] >= 49 && MinaBoard[i][j] <= 57)
+					{
+						Field[i][j] = MinaBoard[i][j];
+						break;
+					}
+				}
+
+				for (int i = vertical; i >= 0; i--)
+				{
+					if (MinaBoard[i][j] == ' ')
+					{
+						Field[i][j] = ' ';
+					}
+					else if (MinaBoard[i][j] >= 49 && MinaBoard[i][j] <= 57)
+					{
+						Field[i][j] = MinaBoard[i][j];
+						break;
+					}
+				}
+			}
+			else if (MinaBoard[vertical][j] >= 49 && MinaBoard[vertical][j] <= 57)
+			{
+				Field[vertical][j] = MinaBoard[vertical][j];
+				break;
+			}
+		}
+
+		for (int j = horizontal; j >= 0; j--)
+		{
+			if (MinaBoard[vertical][j] == ' ')
+			{
+				for (int i = vertical; i < size; i++)
+				{
+					if (MinaBoard[i][j] == ' ')
+					{
+						Field[i][j] = ' ';
+					}
+					else if (MinaBoard[i][j] >= 49 && MinaBoard[i][j] <= 57)
+					{
+						Field[i][j] = MinaBoard[i][j];
+						break;
+					}
+				}
+
+				for (int i = vertical; i >= 0; i--)
+				{
+					if (MinaBoard[i][j] == ' ')
+					{
+						Field[i][j] = ' ';
+					}
+					else if (MinaBoard[i][j] >= 49 && MinaBoard[i][j] <= 57)
+					{
+						Field[i][j] = MinaBoard[i][j];
+						break;
+					}
+				}
+			}
+			else if (MinaBoard[vertical][j] >= 49 && MinaBoard[vertical][j] <= 57)
+			{
+				Field[vertical][j] = MinaBoard[vertical][j];
+				break;
+			}
+		}
+	}
+
+	MakeDiaqonalSpace(vertical, horizontal, size, Field, MinaBoard);
+}
+
+bool Impact(short vertical, short horizontal, size_t size, char** Field, char** MinaBoard) // Воздействие на конкретную координату
+{
+	if (MinaBoard[vertical][horizontal] == 2) return false; // Вы задели мину
+
+	else if (MinaBoard[vertical][horizontal] == ' ')
+	{
+		MakeSpace(vertical, horizontal, size, Field, MinaBoard);
+	}
+
+	else
+	{
+		Field[vertical][horizontal] = MinaBoard[vertical][horizontal];
+	}
+
+	return true;
+}
+
+
+void Deleting_GameOptions(size_t size, char** Field, char** MinaBoard, bool** HiddenField)
+{
+	Delete_array(size, Field);
+	Delete_array(size, MinaBoard);
+	Delete_array(size, HiddenField);
+}
+
+
